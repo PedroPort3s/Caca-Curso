@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import { StyleSheet } from 'react-native';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './assets/styles/styles'
 
 function InicioTela({ navigation }) {
@@ -30,31 +29,33 @@ function DetalhesTela({ navigation }) {
   );
 }
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Inicio">
-        <Stack.Screen name="Inicio" component={InicioTela} />
-        <Stack.Screen name="Detalhes" component={DetalhesTela} />
-      </Stack.Navigator>
+      <Tab.Navigator initialRouteName="Inicio" screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Inicio') {
+              iconName = focused
+                ? 'home' : 'home-outline';
+            } else if (route.name === 'Detalhes') {
+              iconName = focused ? 'ellipsis-vertical' : 'ellipsis-vertical-outline';
+            }
+            
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: '#00FFC1',
+          tabBarInactiveTintColor: '#00418F',
+        })}
+        >
+        <Tab.Screen name="Inicio" component={InicioTela} />
+        <Tab.Screen name="Detalhes" component={DetalhesTela} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
 export default App;
-
-// Estilos
-// const styles = StyleSheet.create({
-//   basico: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: '#333333',
-//   },
-//   textosBasicos: {
-//     color: 'red',
-//     fontSize: 25,
-//   }
-// })
