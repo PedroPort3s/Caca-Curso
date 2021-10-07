@@ -6,6 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import API from './src/helpers/ConsumoApi.js';
 import styles from './assets/styles/styles';
 import * as GoogleLogin from 'expo-google-app-auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Facebook from 'expo-facebook';
 
 // function RecomendadosTela({ navigation }) {
 //   return (
@@ -107,10 +109,13 @@ import * as GoogleLogin from 'expo-google-app-auth';
 
 
 const Login = ({ navigation }) => {
-  const mensagemRetorno = (mensagem, tipo = 'FAILED') => {
-    setMessage(mensagem);
-    setMessageType(tipo);
-  };
+  const [message, setMessage] = useState();
+
+  // const mensagemRetorno = (message, type = '') => {
+  //   setMessage(message);
+  //   setMessageType(type);
+  // };
+
   const [googleSubmitting, settGoogleSubmitting] = useState(false);
 
   const efetuarGoogleLogin = () => {
@@ -126,35 +131,62 @@ const Login = ({ navigation }) => {
 
         if (type == 'success') {
           const { email, name, photoUrl } = user;
-          mensagemRetorno('Login via Google efetuado com sucesso', 'SUCCESS');
-          // persistLogin({ email, name, photoUrl }, 'Google signin successful', 'SUCCESS');
+          // mensagemRetorno('Login via Google efetuado com sucesso', 'SUCCESS');
+          persistLogin({ email, name, photoUrl }, 'Login com Google bem sucedido', 'SUCCESS');
           setTimeout(() => navigation.navigate('', { email, user, photoUrl }), 1000);
         } else {
-          mensagemRetorno('Login com o Google cancelado pelo usuário');
+          // mensagemRetorno('Login com o Google cancelado pelo usuário');
         }
         settGoogleSubmitting(false);
 
       })
       .catch((error) => {
-        mensagemRetorno('Houve um erro ao tentar executar o processo de login com o Google');
+        // mensagemRetorno('Houve um erro ao tentar executar o processo de login com o Google');
         console.log(error);
         settGoogleSubmitting(false);
       });
   };
 
-  // const persistLogin = (credentials, message, status) => {
-  //   AsyncStorage.setItem('googleLoginCredentials', JSON.stringify(credentials))
-  //     .then(() => {
-  //       mensagemRetorno(message, status);
-  //       setStoredCredentials(credentials);
-  //     })
-  //     .catch((error) => {
-  //       mensagemRetorno('Persisting login failed');
-  //       console.log(error);
-  //     });
-  // };
+  const efetuarFacebookLogin = () => {
+    try {
+       Facebook.initializeAsync({
+        appId: '1940992706081759',
+      });
+      const {
+        type,
+        token,
+        expirationDate,
+        permissions,
+        declinedPermissions,
+      } =  Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile'],
+      });
+      if (type === 'success') {
+        // Get the user's name using Facebook's Graph API
+        const response =  fetch(`https://graph.facebook.com/me?access_token=${token}`);
+        Alert.alert('Logado', `Olá ${( response.json()).name}!`);
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      alert(`Erro ao tentar logar com o Facebook: ${message}`);
+    }
+  }; 
+   const efetuarOutlookLogin = () => {
 
+  };
 
+  const persistLogin = (credentials, message, status) => {
+    AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
+      .then(() => {
+        // mensagemRetorno(message, status);
+        setStoredCredentials(credentials);
+      })
+      .catch((error) => {
+        // mensagemRetorno('Persisting login failed');
+        console.log(error);
+      });
+  };
 
   return (
     <View style={styles.basico}>
@@ -162,8 +194,10 @@ const Login = ({ navigation }) => {
       {!googleSubmitting && (
         <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
       )}
+      
+      <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
 
-
+      <Button onPress={efetuarOutlookLogin} title='Login Outlook'></Button>
     </View>
   );
 }
