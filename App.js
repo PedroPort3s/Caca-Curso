@@ -130,10 +130,13 @@ const Login = ({ navigation }) => {
         const { type, user } = result;
 
         if (type == 'success') {
-          const { email, name, photoUrl } = user;
+          const { email, name, photoUrl, id } = user;
           // mensagemRetorno('Login via Google efetuado com sucesso', 'SUCCESS');
-          persistLogin({ email, name, photoUrl }, 'Login com Google bem sucedido', 'SUCCESS');
-          setTimeout(() => navigation.navigate('', { email, user, photoUrl }), 1000);
+          persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
+
+          setTimeout(() => navigation.navigate('', { email, user, photoUrl, id }), 1000);
+
+          AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
         } else {
           // mensagemRetorno('Login com o Google cancelado pelo usuário');
         }
@@ -149,7 +152,7 @@ const Login = ({ navigation }) => {
 
   const efetuarFacebookLogin = () => {
     try {
-       Facebook.initializeAsync({
+      Facebook.initializeAsync({
         appId: '1940992706081759',
       });
       const {
@@ -158,51 +161,69 @@ const Login = ({ navigation }) => {
         expirationDate,
         permissions,
         declinedPermissions,
-      } =  Facebook.logInWithReadPermissionsAsync({
+      } = Facebook.logInWithReadPermissionsAsync({
         permissions: ['public_profile'],
       });
       if (type === 'success') {
         // Get the user's name using Facebook's Graph API
-        const response =  fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        Alert.alert('Logado', `Olá ${( response.json()).name}!`);
+        const response = fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,picture.height(500)`);
+        Alert.alert('Logado', `Olá ${(response.json()).name}!`);
+
+        persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
+
+        AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
       } else {
         // type === 'cancel'
       }
     } catch ({ message }) {
       alert(`Erro ao tentar logar com o Facebook: ${message}`);
     }
-  }; 
-   const efetuarOutlookLogin = () => {
-
   };
-
-  const persistLogin = (credentials, message, status) => {
-    AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
-      .then(() => {
-        // mensagemRetorno(message, status);
-        setStoredCredentials(credentials);
-      })
-      .catch((error) => {
-        // mensagemRetorno('Persisting login failed');
-        console.log(error);
+  const efetuarAppleLogin = () => {
+    try {
+      const credential = AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
       });
+      // signed in
+    } catch (e) {
+      if (e.code === 'ERR_CANCELED') {
+        // handle that the user canceled the sign-in flow
+      } else {
+        // handle other errors
+      }
+    }
   };
 
-  return (
-    <View style={styles.basico}>
-      <Text style={styles.textosBasicos}>Caça Cursos</Text>
-      {!googleSubmitting && (
-        <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
-      )}
-      
-      <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
+    const persistLogin = (credentials, message, status) => {
+      AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
+        .then(() => {
+          // mensagemRetorno(message, status);
+          setStoredCredentials(credentials);
+        })
+        .catch((error) => {
+          // mensagemRetorno('Persisting login failed');
+          console.log(error);
+        });
+    };
 
-      <Button onPress={efetuarOutlookLogin} title='Login Outlook'></Button>
-    </View>
-  );
-}
+    return (
+      <View style={styles.basico}>
+        <Text style={styles.textosBasicos}>Caça Cursos</Text>
+        {!googleSubmitting && (
+          <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
+        )}
 
-export default Login;
+        <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
+
+        <Button onPress={efetuarAppleLogin} title='Login Apple'></Button>
+      </View>
+    );
+  }
+
+  export default Login;
 
 
 
