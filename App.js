@@ -145,38 +145,48 @@ const Login = ({ navigation }) => {
       })
       .catch((error) => {
         // mensagemRetorno('Houve um erro ao tentar executar o processo de login com o Google');
-        console.log(error);
+        console.log(error.message);
         settGoogleSubmitting(false);
       });
   };
 
-  const efetuarFacebookLogin = () => {
+  async function efetuarFacebookLogin ()  {
     try {
-      Facebook.initializeAsync({
+      await Facebook.initializeAsync({
         appId: '1940992706081759',
       });
-      const {
-        type,
-        token,
-        expirationDate,
-        permissions,
-        declinedPermissions,
-      } = Facebook.logInWithReadPermissionsAsync({
+      // const {
+      //   type,
+      //   token,
+      //   expirationDate,
+      //   permissions,
+      //   declinedPermissions,
+      // } = await Facebook.logInWithReadPermissionsAsync({
+      //   permissions: ['public_profile'],
+      // });
+
+      const obj = await Facebook.logInWithReadPermissionsAsync({
         permissions: ['public_profile'],
       });
+
+      
+      console.log("Chegou aqui");
+      console.log(obj);
+      
       if (type === 'success') {
         // Get the user's name using Facebook's Graph API
-        const response = fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,picture.height(500)`);
-        Alert.alert('Logado', `Olá ${(response.json()).name}!`);
+        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+        // Alert.alert('Logado', `Olá ${(response.json()).name}!`);
 
         persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
 
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
       } else {
-        // type === 'cancel'
+         type === 'cancel'
       }
-    } catch ({ message }) {
-      alert(`Erro ao tentar logar com o Facebook: ${message}`);
+    } catch ( error ) {
+      // console.log(`Erro ao tentar logar com o Facebook: ${message}`);
+      throw error;
     }
   };
   const efetuarAppleLogin = () => {
