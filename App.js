@@ -150,43 +150,57 @@ const Login = ({ navigation }) => {
       });
   };
 
-  async function efetuarFacebookLogin ()  {
+  // const efetuarFacebookLogin = async () => {
+  //   await Facebook.initializeAsync('1940992706081759');
+
+  //   const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+  //     { permissions: ['public_profile', 'email'] },
+  //   );
+
+  //   if (type === 'success') {
+  //     // Get the user's name using Facebook's Graph API
+  //     const response = await fetch(`https://graph.facebook.com/oauth/access_token=${token}`);
+  //     // Alert.alert('Logado', `Olá ${(response.json()).name}!`);
+
+  //     persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
+
+  //     AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
+  //   } else {
+  //     type === 'cancel'
+  //   }
+  // }
+
+  async function efetuarFacebookLogin() {
     try {
       await Facebook.initializeAsync({
-        appId: '1940992706081759',
+        appId: '1940992706081759'
       });
-      // const {
-      //   type,
-      //   token,
-      //   expirationDate,
-      //   permissions,
-      //   declinedPermissions,
-      // } = await Facebook.logInWithReadPermissionsAsync({
-      //   permissions: ['public_profile'],
-      // });
-
-      const obj = await Facebook.logInWithReadPermissionsAsync({
+      const {
+        type,
+        token,
+        expirationDate,
+        permissions,
+        declinedPermissions,
+      } = await Facebook.logInWithReadPermissionsAsync({
         permissions: ['public_profile'],
       });
-
-      
-      console.log("Chegou aqui");
-      console.log(obj);
-      
       if (type === 'success') {
         // Get the user's name using Facebook's Graph API
-        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+        const response = await fetch(`https://graph.facebook.com/oauth/access_token=${token}`);
         // Alert.alert('Logado', `Olá ${(response.json()).name}!`);
 
-        persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
+        // persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
 
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
       } else {
-         type === 'cancel'
+        type === 'cancel'
       }
-    } catch ( error ) {
-      // console.log(`Erro ao tentar logar com o Facebook: ${message}`);
-      throw error;
+    }
+    //catch ({ message }) {
+    //   console.log(`Erro ao tentar logar com o Facebook: ${message}`);
+    // }
+    catch (error) {
+      console.log(error);
     }
   };
   const efetuarAppleLogin = () => {
@@ -207,33 +221,33 @@ const Login = ({ navigation }) => {
     }
   };
 
-    const persistLogin = (credentials, message, status) => {
-      AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
-        .then(() => {
-          // mensagemRetorno(message, status);
-          setStoredCredentials(credentials);
-        })
-        .catch((error) => {
-          // mensagemRetorno('Persisting login failed');
-          console.log(error);
-        });
-    };
+  const persistLogin = (credentials, message, status) => {
+    AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
+      .then(() => {
+        // mensagemRetorno(message, status);
+        setStoredCredentials(credentials);
+      })
+      .catch((error) => {
+        // mensagemRetorno('Persisting login failed');
+        console.log(error);
+      });
+  };
 
-    return (
-      <View style={styles.basico}>
-        <Text style={styles.textosBasicos}>Caça Cursos</Text>
-        {!googleSubmitting && (
-          <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
-        )}
+  return (
+    <View style={styles.basico}>
+      <Text style={styles.textosBasicos}>Caça Cursos</Text>
+      {!googleSubmitting && (
+        <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
+      )}
 
-        <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
+      <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
 
-        <Button onPress={efetuarAppleLogin} title='Login Apple'></Button>
-      </View>
-    );
-  }
+      <Button onPress={efetuarAppleLogin} title='Login Apple'></Button>
+    </View>
+  );
+}
 
-  export default Login;
+export default Login;
 
 
 

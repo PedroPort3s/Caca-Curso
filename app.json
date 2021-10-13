@@ -4,6 +4,9 @@
     "slug": "Caca-Curso",
     "version": "1.0.0",
     "orientation": "portrait",
+    "facebookScheme": "fb123456789012345",
+    "facebookAppId": "1940992706081759", 
+    "facebookDisplayName": "Caça Cursos",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
