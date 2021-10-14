@@ -108,7 +108,7 @@ import * as Facebook from 'expo-facebook';
 // export default App;
 
 
-const Login = ({ navigation }) => {
+const Login  =  ({ navigation }) =>  {
   const [message, setMessage] = useState();
 
   // const mensagemRetorno = (message, type = '') => {
@@ -150,26 +150,6 @@ const Login = ({ navigation }) => {
       });
   };
 
-  // const efetuarFacebookLogin = async () => {
-  //   await Facebook.initializeAsync('1940992706081759');
-
-  //   const { type, token } = await Facebook.logInWithReadPermissionsAsync(
-  //     { permissions: ['public_profile', 'email'] },
-  //   );
-
-  //   if (type === 'success') {
-  //     // Get the user's name using Facebook's Graph API
-  //     const response = await fetch(`https://graph.facebook.com/oauth/access_token=${token}`);
-  //     // Alert.alert('Logado', `Olá ${(response.json()).name}!`);
-
-  //     persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
-
-  //     AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
-  //   } else {
-  //     type === 'cancel'
-  //   }
-  // }
-
   async function efetuarFacebookLogin() {
     try {
       await Facebook.initializeAsync({
@@ -182,23 +162,23 @@ const Login = ({ navigation }) => {
         permissions,
         declinedPermissions,
       } = await Facebook.logInWithReadPermissionsAsync({
-        permissions: ['public_profile'],
+        permissions: ['public_profile','email'],
       });
       if (type === 'success') {
-        // Get the user's name using Facebook's Graph API
-        const response = await fetch(`https://graph.facebook.com/oauth/access_token=${token}`);
-        // Alert.alert('Logado', `Olá ${(response.json()).name}!`);
+        
+        const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`);
 
-        // persistLogin({ response }, 'Login com Facebook bem sucedido', 'SUCCESS');
+        const json = await response.json();
+
+        console.log(json);
+
+        persistLogin({ json }, 'Login com Facebook bem sucedido', 'SUCCESS');
 
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
       } else {
         type === 'cancel'
       }
     }
-    //catch ({ message }) {
-    //   console.log(`Erro ao tentar logar com o Facebook: ${message}`);
-    // }
     catch (error) {
       console.log(error);
     }
