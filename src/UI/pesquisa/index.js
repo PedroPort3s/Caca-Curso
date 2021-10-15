@@ -3,8 +3,8 @@ import { ActivityIndicator, FlatList, Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import API from './src/helpers/ConsumoApi.js';
-import styles from './assets/styles/styles';
+import API from '../../helpers/ConsumoApi';
+import styles from './style';
 
 function RecomendadosTela({ navigation }) {
     return (
@@ -73,7 +73,7 @@ function ConfiguracoesTela({ navigation }) {
 
 const Tab = createBottomTabNavigator();
 
-function App() {
+function Pesquisa() {
     return (
         <NavigationContainer>
             <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
@@ -102,4 +102,4 @@ function App() {
     );
 }
 
-export default App;
+export default Pesquisa;

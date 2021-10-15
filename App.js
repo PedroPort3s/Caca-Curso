@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { ActivityIndicator, FlatList, Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -8,113 +8,20 @@ import styles from './assets/styles/styles';
 import * as GoogleLogin from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Facebook from 'expo-facebook';
+import { CredentialsContext } from './src/helpers/CredentialsContext.js';
+import Pesquisa from './src/UI/pesquisa/index.js'
 
-// function RecomendadosTela({ navigation }) {
-//   return (
-//     <View style={styles.basico}>
-//       <Text style={styles.textosBasicos}>Página Inicial</Text>
-//       <Button
-//         title="Ir para outra página"
-//         onPress={() => navigation.navigate('Detalhes')}
-//       />
-
-//     </View>
-//   );
-// }
-// function FavoritosTela({ navigation }) {
-//   return (
-//     <View style={styles.basico}>
-//       <Text style={styles.textosBasicos}>Página Inicial</Text>
-//       <Button
-//         title="Ir para outra página 1, pq essa é a 3"
-//         onPress={() => navigation.navigate('Detalhes')}
-//       />
-
-//     </View>
-//   );
-// }
-
-// function ConfiguracoesTela({ navigation }) {
-
-//   const [isLoading, setLoading] = useState(true);
-//   const [data, setData] = useState([]);
-
-//   useEffect(() => {
-//     teste();
-//   }, []);
-
-
-
-//   const teste = async () => {
-//     try {
-//       const resposta = await API.MakeRequest('https://reactnative.dev/movies.json', 'GET');
-//       console.log(resposta.description);
-//       setData(resposta.movies);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//     finally {
-//       setLoading(false);
-//     }
-//   }
-
-//   return (
-//     <View style={styles.basico}>
-//       {isLoading ? <ActivityIndicator /> : (
-//         <FlatList style={styles.textosBasicos}
-//           data={data}
-//           keyExtractor={({ id }, index) => id}
-//           renderItem={({ item }) => (
-//             <Text onPress={() => navigation.navigate('Recomendados')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
-//           )}
-//         />
-//       )}
-//       <Text style={styles.textosBasicos}>A outra página, clique no grid para voltar ao inicio </Text>
-//     </View>
-//   );
-// }
-
-// const Tab = createBottomTabNavigator();
-
-// function App() {
-//   return (
-//     <NavigationContainer>
-//       <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
-//         tabBarIcon: ({ focused, color, size }) => {
-//           let iconName;
-
-//           if (route.name === 'Recomendados') {
-//             iconName = focused ? 'md-star' : 'md-star-outline';
-//           } else if (route.name === 'Configuracoes') {
-//             iconName = focused ? 'settings' : 'settings-outline';
-//           } else if (route.name === 'Favoritos') {
-//             iconName = focused ? 'heart' : 'heart-outline';
-//           }
-
-//           return <Ionicons name={iconName} size={size} color={color} />;
-//         },
-//         tabBarActiveTintColor: '#000',
-//         tabBarInactiveTintColor: '#000',
-//       })}
-//       >
-//         <Tab.Screen name="Recomendados" component={RecomendadosTela} />
-//         <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-//         <Tab.Screen name="Favoritos" component={FavoritosTela} />
-//       </Tab.Navigator>
-//     </NavigationContainer>
-//   );
-// }
-
-// export default App;
-
-
-const Login  =  ({ navigation }) =>  {
+const Login = ({ navigation }) => {
+  
   const [message, setMessage] = useState();
+  const [messageType, setMessageType] = useState();
 
-  // const mensagemRetorno = (message, type = '') => {
-  //   setMessage(message);
-  //   setMessageType(type);
-  // };
+  const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
+
+  const handleMessage = (message, type = '') => {
+    setMessage(message);
+    setMessageType(type);
+  };
 
   const [googleSubmitting, settGoogleSubmitting] = useState(false);
 
@@ -131,20 +38,21 @@ const Login  =  ({ navigation }) =>  {
 
         if (type == 'success') {
           const { email, name, photoUrl, id } = user;
-          // mensagemRetorno('Login via Google efetuado com sucesso', 'SUCCESS');
+          handleMessage('Login via Google efetuado com sucesso', 'SUCCESS');
           persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
 
-          setTimeout(() => navigation.navigate('', { email, user, photoUrl, id }), 1000);
-
           AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
+          
+          navigation.navigate('Pesquisa');
+
         } else {
-          // mensagemRetorno('Login com o Google cancelado pelo usuário');
+          handleMessage('Login com o Google cancelado pelo usuário');
         }
         settGoogleSubmitting(false);
 
       })
       .catch((error) => {
-        // mensagemRetorno('Houve um erro ao tentar executar o processo de login com o Google');
+        handleMessage('Houve um erro ao tentar executar o processo de login com o Google');
         console.log(error.message);
         settGoogleSubmitting(false);
       });
@@ -162,10 +70,10 @@ const Login  =  ({ navigation }) =>  {
         permissions,
         declinedPermissions,
       } = await Facebook.logInWithReadPermissionsAsync({
-        permissions: ['public_profile','email'],
+        permissions: ['public_profile', 'email'],
       });
       if (type === 'success') {
-        
+
         const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`);
 
         const json = await response.json();
@@ -204,11 +112,11 @@ const Login  =  ({ navigation }) =>  {
   const persistLogin = (credentials, message, status) => {
     AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
       .then(() => {
-        // mensagemRetorno(message, status);
+        handleMessage(message, status);
         setStoredCredentials(credentials);
       })
       .catch((error) => {
-        // mensagemRetorno('Persisting login failed');
+        handleMessage('Persisting login failed');
         console.log(error);
       });
   };
