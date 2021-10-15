@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Button, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import API from '../../helpers/ConsumoApi';
 import styles from './style';
 
-function RecomendadosTela({ navigation }) {
+export function RecomendadosTela({ navigation }) {
     return (
         <View style={styles.basico}>
             <Text style={styles.textosBasicos}>Página Inicial</Text>
@@ -18,7 +17,7 @@ function RecomendadosTela({ navigation }) {
         </View>
     );
 }
-function FavoritosTela({ navigation }) {
+export function FavoritosTela({ navigation }) {
     return (
         <View style={styles.basico}>
             <Text style={styles.textosBasicos}>Página Inicial</Text>
@@ -31,7 +30,7 @@ function FavoritosTela({ navigation }) {
     );
 }
 
-function ConfiguracoesTela({ navigation }) {
+export function ConfiguracoesTela({ navigation }) {
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -73,33 +72,29 @@ function ConfiguracoesTela({ navigation }) {
 
 const Tab = createBottomTabNavigator();
 
-function Pesquisa() {
+export function Pesquisa() {
     return (
-        <NavigationContainer>
-            <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
+        <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
 
-                    if (route.name === 'Recomendados') {
-                        iconName = focused ? 'md-star' : 'md-star-outline';
-                    } else if (route.name === 'Configuracoes') {
-                        iconName = focused ? 'settings' : 'settings-outline';
-                    } else if (route.name === 'Favoritos') {
-                        iconName = focused ? 'heart' : 'heart-outline';
-                    }
+                if (route.name === 'Recomendados') {
+                    iconName = focused ? 'md-star' : 'md-star-outline';
+                } else if (route.name === 'Configuracoes') {
+                    iconName = focused ? 'settings' : 'settings-outline';
+                } else if (route.name === 'Favoritos') {
+                    iconName = focused ? 'heart' : 'heart-outline';
+                }
 
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: '#000',
-                tabBarInactiveTintColor: '#000',
-            })}
-            >
-                <Tab.Screen name="Recomendados" component={RecomendadosTela} />
-                <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-                <Tab.Screen name="Favoritos" component={FavoritosTela} />
-            </Tab.Navigator>
-        </NavigationContainer>
+                return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: '#000',
+            tabBarInactiveTintColor: '#000',
+        })}
+        >
+            <Tab.Screen name="Recomendados" component={RecomendadosTela} />
+            <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
+            <Tab.Screen name="Favoritos" component={FavoritosTela} />
+        </Tab.Navigator>
     );
 }
-
-export default Pesquisa;
