@@ -96,12 +96,15 @@ const Login = ({ navigation }) => {
         const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`);
 
         const json = await response.json();
-
+        const { name, email, id, picture } = json;
         console.log(json);
 
         persistLogin({ json }, 'Login com Facebook bem sucedido', 'SUCCESS');
 
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
+
+        //gravar no mysql via api Caça-Cursos
+        gravarUsuario(name, email, id, picture.data.url, "Facebook");
 
         navigation.navigate('Pesquisa');
       } else {
