@@ -8,7 +8,11 @@ export default StyleSheet.create({
         backgroundColor: '#333333',
       },
       textosBasicos: {
-        color: 'red',
+        color: 'white',
         fontSize: 25,
+      },
+      textoLogin: {
+        color: 'white',
+        fontSize: 12,
       }
 })

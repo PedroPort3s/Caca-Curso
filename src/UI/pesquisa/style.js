@@ -8,7 +8,14 @@ export default StyleSheet.create({
         backgroundColor: '#333333',
       },
       textosBasicos: {
-        color: 'red',
+        color: 'white',
         fontSize: 25,
-      }
+      },
+      textInput: {
+        height: 40,
+        width:40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+      },
 })

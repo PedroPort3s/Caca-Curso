@@ -6,9 +6,10 @@ import * as GoogleLogin from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Facebook from 'expo-facebook';
 import { CredentialsContext } from './src/helpers/CredentialsContext.js';
-import { Pesquisa, ConfiguracoesTela, FavoritosTela, RecomendadosTela } from './src/UI/pesquisa/index.js'
-
+import { Pesquisa, ConfiguracoesTela, FavoritosTela, PesquisaTela } from './src/UI/pesquisa/index.js'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SocialIcon } from 'react-native-elements'
+
 
 const Login = ({ navigation }) => {
 
@@ -148,13 +149,22 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.basico}>
       <Text style={styles.textosBasicos}>Caça Cursos</Text>
+      <Text style={styles.textoLogin}>Escolha sua plataforma para efetuar login</Text>
+      {/* {!googleSubmitting && (
+        <Button onPress={efetuarGoogleLogin} title='Login Google' style={styles.btnGoogle}></Button>
+      )} */}
+
+      {/* <Button onPress={efetuarFacebookLogin} title='Login Facebook' style={styles.btnFacebook}></Button> */}
+
+      {/* <Button onPress={efetuarAppleLogin} title='Login Apple'></Button> */}
+
       {!googleSubmitting && (
-        <Button onPress={efetuarGoogleLogin} title='Login Google'></Button>
+      <SocialIcon type='google' onPress={efetuarGoogleLogin} />
       )}
+      <SocialIcon type='facebook' onPress={efetuarFacebookLogin} />
+      <SocialIcon type='apple' onPress={efetuarAppleLogin}/>
 
-      <Button onPress={efetuarFacebookLogin} title='Login Facebook'></Button>
 
-      <Button onPress={efetuarAppleLogin} title='Login Apple'></Button>
     </View>
   );
 }
@@ -164,9 +174,9 @@ const Stack = createNativeStackNavigator();
 function app() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="RecomendadosTela" component={RecomendadosTela} />
+        <Stack.Screen name="PesquisaTela" component={PesquisaTela} />
         <Stack.Screen name="FavoritosTela" component={FavoritosTela} />
         <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} />
         <Stack.Screen name="Pesquisa" component={Pesquisa} />

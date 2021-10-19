@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Button, View, Text } from 'react-native';
+import { ActivityIndicator, FlatList, Button, View, Text, TextInput } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import API from '../../helpers/ConsumoApi';
 import styles from './style';
 
-export function RecomendadosTela({ navigation }) {
+export function PesquisaTela({ navigation }) {
     return (
         <View style={styles.basico}>
-            <Text style={styles.textosBasicos}>Página Inicial</Text>
-            <Button
+            <Text style={styles.textosBasicos}>Inicio</Text>
+            {/* <Button
                 title="Ir para outra página"
                 onPress={() => navigation.navigate('Detalhes')}
-            />
+            /> */}
+            {/* <TextInput style={styles.textInput} /> */}
 
         </View>
     );
@@ -61,7 +62,7 @@ export function ConfiguracoesTela({ navigation }) {
                     data={data}
                     keyExtractor={({ id }, index) => id}
                     renderItem={({ item }) => (
-                        <Text onPress={() => navigation.navigate('Recomendados')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
+                        <Text onPress={() => navigation.navigate('Pesquisa')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
                     )}
                 />
             )}
@@ -74,7 +75,7 @@ const Tab = createBottomTabNavigator();
 
 export function Pesquisa() {
     return (
-        <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
+        <Tab.Navigator initialRouteName="Pesquisas" screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
                 let iconName;
 
@@ -92,7 +93,7 @@ export function Pesquisa() {
             tabBarInactiveTintColor: '#000',
         })}
         >
-            <Tab.Screen name="Recomendados" component={RecomendadosTela} />
+            <Tab.Screen name="Recomendados" component={PesquisaTela} />
             <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
             <Tab.Screen name="Favoritos" component={FavoritosTela} />
         </Tab.Navigator>
