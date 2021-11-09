@@ -174,6 +174,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ConfiguracoesTela2 from '../configuracoes/index.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import API from '../../helpers/ConsumoApi.js';
+import Card from '../components/card'
+
 
 import {
     Input,
@@ -353,11 +355,12 @@ export function PesquisaInicial({ navigation }) {
     async function BuscarCursos() {
         console.log(palavraChave);
         try {
-            const url = 'http://192.168.15.47:3000/curso?p=' + encodeURIComponent(palavraChave);            
-            
+            const url = 'http://192.168.1.102:3000/curso?p=' + encodeURIComponent(palavraChave);
+
             console.log(url);
 
             await axios.get(url).then((response) => {
+                console.log(response);
                 console.log(response.data.objeto);
                 setData(response.data.objeto);
             });
@@ -436,7 +439,13 @@ export function PesquisaInicial({ navigation }) {
             <ScrollView style={styles.container}>
                 {data.map((item) => (
                     <View key={item.link}>
-                        <Text style={styles.item}>{item.nome}</Text>
+                        <Card
+                            nome={item.nome}
+                            keywords={item.keywords}
+                            link={item.link}
+                            temaPrincipal={item.temaPrincipal}
+                            urlImagem={item.urlImagem}
+                        />
                     </View>
                 ))}
             </ScrollView>

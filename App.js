@@ -20,7 +20,7 @@ const Login = ({ navigation }) => {
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
-    await fetch('http://192.168.15.47:3000/usuario', {
+    await fetch('http://192.168.1.102:3000/usuario', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
