@@ -6,9 +6,10 @@ import * as GoogleLogin from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Facebook from 'expo-facebook';
 import { CredentialsContext } from './src/helpers/CredentialsContext.js';
-import { Pesquisa, ConfiguracoesTela, FavoritosTela, PesquisaTela } from './src/UI/pesquisa/index.js'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SocialIcon } from 'react-native-elements'
+import PesquisaInicial from './src/UI/pesquisa'
+import ConfiguracoesTela from './src/UI/configuracoes';
 
 
 const Login = ({ navigation }) => {
@@ -17,11 +18,6 @@ const Login = ({ navigation }) => {
   const [messageType, setMessageType] = useState();
 
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
-
-  // const handleMessage = (message, type = '') => {
-  //   setMessage(message);
-  //   setMessageType(type);
-  // };
 
   async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
     await fetch('http://192.168.15.47:3000/usuario', {
@@ -55,24 +51,22 @@ const Login = ({ navigation }) => {
 
         if (type == 'success') {
           const { email, name, photoUrl, id } = user;
-          // handleMessage('Login via Google efetuado com sucesso', 'SUCCESS');
           persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
 
           AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
 
           //gravar no mysql via api Caça-Cursos
-          gravarUsuario(name, email, id, photoUrl, "Google");
+          // gravarUsuario(name, email, id, photoUrl, "Google");
 
-          navigation.navigate('Pesquisa');
+          navigation.navigate('PesquisaInicial');
 
         } else {
-          // handleMessage('Login com o Google cancelado pelo usuário');
+          throw error;
         }
         settGoogleSubmitting(false);
 
       })
       .catch((error) => {
-        // handleMessage('Houve um erro ao tentar executar o processo de login com o Google');
         console.log(error.message);
         settGoogleSubmitting(false);
       });
@@ -105,9 +99,9 @@ const Login = ({ navigation }) => {
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
 
         //gravar no mysql via api Caça-Cursos
-        gravarUsuario(name, email, id, picture.data.url, "Facebook");
+        // gravarUsuario(name, email, id, picture.data.url, "Facebook");
 
-        navigation.navigate('Pesquisa');
+        navigation.navigate('PesquisaInicial');
       } else {
         type === 'cancel'
       }
@@ -137,11 +131,9 @@ const Login = ({ navigation }) => {
   const persistLogin = (credentials, message, status) => {
     AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
       .then(() => {
-        // handleMessage(message, status);
         setStoredCredentials(credentials);
       })
       .catch((error) => {
-        // handleMessage('Persisting login failed');
         console.log(error);
       });
   };
@@ -149,20 +141,13 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.basico}>
       <Text style={styles.textosBasicos}>Caça Cursos</Text>
-      <Text style={styles.textoLogin}>Escolha sua plataforma para efetuar login</Text>
-      {/* {!googleSubmitting && (
-        <Button onPress={efetuarGoogleLogin} title='Login Google' style={styles.btnGoogle}></Button>
-      )} */}
-
-      {/* <Button onPress={efetuarFacebookLogin} title='Login Facebook' style={styles.btnFacebook}></Button> */}
-
-      {/* <Button onPress={efetuarAppleLogin} title='Login Apple'></Button> */}
+      <Text style={styles.textoLogin}>Escolha sua plataforma para efetuar o login</Text>
 
       {!googleSubmitting && (
-      <SocialIcon type='google' onPress={efetuarGoogleLogin} />
+        <SocialIcon type='google' onPress={efetuarGoogleLogin} />
       )}
       <SocialIcon type='facebook' onPress={efetuarFacebookLogin} />
-      <SocialIcon type='apple' onPress={efetuarAppleLogin}/>
+      <SocialIcon type='apple' onPress={efetuarAppleLogin} />
 
 
     </View>
@@ -176,10 +161,8 @@ function app() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="PesquisaTela" component={PesquisaTela} />
-        <Stack.Screen name="FavoritosTela" component={FavoritosTela} />
+        <Stack.Screen name="PesquisaInicial" component={PesquisaInicial} />
         <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} />
-        <Stack.Screen name="Pesquisa" component={Pesquisa} />
       </Stack.Navigator>
     </NavigationContainer>
   );
