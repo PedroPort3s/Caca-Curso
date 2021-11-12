@@ -10,6 +10,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SocialIcon } from 'react-native-elements'
 import PesquisaInicial from './src/UI/pesquisa'
 import ConfiguracoesTela from './src/UI/configuracoes';
+import Detalhes from './src/UI/detalhes';
 
 
 const Login = ({ navigation }) => {
@@ -160,9 +161,10 @@ function app() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Detalhes" component={Detalhes} />
+        {/* <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="PesquisaInicial" component={PesquisaInicial} />
-        <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} />
+        <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
