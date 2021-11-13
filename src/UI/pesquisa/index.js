@@ -164,18 +164,15 @@
 //   export default app;
 
 
-import React, { useState, useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useState } from 'react';
 import styles from '../../../assets/styles/styles.js';
 // import { Pesquisa, ConfiguracoesTela, FavoritosTela, PesquisaTela } from './src/UI/pesquisa/index.js'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Pesquisa, ConfiguracoesTela } from '../../UI/configuracoes/index.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ConfiguracoesTela2 from '../configuracoes/index.js';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import API from '../../helpers/ConsumoApi.js';
 import Card from '../components/card'
-
+import ConfiguracoesTela from '../configuracoes';
+import DetalhesCursoTela from '../curso';
+import Ionicons from 'react-native-vector-icons/Ionicons';;
 
 import {
     Input,
@@ -222,7 +219,7 @@ const SearchBarCustom = (props) => {
     return <SearchBar value={value} onChangeText={setValue} {...props} />;
 };
 
-export function PesquisaInicial({ navigation }) {
+const PesquisaInicial = ({ navigation }) => {
 
     //   const [message, setMessage] = useState();
     //   const [messageType, setMessageType] = useState();
@@ -355,7 +352,7 @@ export function PesquisaInicial({ navigation }) {
     async function BuscarCursos() {
         console.log(palavraChave);
         try {
-            const url = 'http://192.168.1.102:3000/curso?p=' + encodeURIComponent(palavraChave);
+            const url = 'http://192.168.15.47:3000/curso?p=' + encodeURIComponent(palavraChave);
 
             console.log(url);
 
@@ -377,7 +374,13 @@ export function PesquisaInicial({ navigation }) {
 
     };
 
-    const Tab = createBottomTabNavigator();
+    async function CarregarCurso() {
+        try {
+            navigation.navigate('DetalhesCursoTela');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
 
@@ -415,7 +418,7 @@ export function PesquisaInicial({ navigation }) {
                     borderColor: 'transparent',
                     borderWidth: 0,
                     borderRadius: 30,
-                    marginTop: 30
+                    marginTop: 50
                 }}
                 containerStyle={{
                     width: 200,
@@ -445,18 +448,32 @@ export function PesquisaInicial({ navigation }) {
                             link={item.link}
                             temaPrincipal={item.temaPrincipal}
                             urlImagem={item.urlImagem}
+                            CarregarCurso={CarregarCurso}
                         />
                     </View>
                 ))}
             </ScrollView>
 
+            {/* <Tab.Navigator initialRouteName="Pesquisas" screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
 
-            {/* <Button
-                title="Ir para outra página"
-                onPress={() => navigation.navigate('Detalhes')}
-            /> */}
-            {/* <TextInput style={styles.textInput} /> */}
+                    if (route.name === 'Recomendados') {
+                        iconName = focused ? 'md-star' : 'md-star-outline';
+                    } else if (route.name === 'Configuracoes') {
+                        iconName = focused ? 'settings' : 'settings-outline';
+                    } else if (route.name === 'Favoritos') {
+                        iconName = focused ? 'heart' : 'heart-outline';
+                    }
 
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                },
+                tabBarActiveTintColor: '#000',
+                tabBarInactiveTintColor: '#000',
+            })}
+            >
+                <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
+            </Tab.Navigator> */}
         </View>
         /*       <View style={styles.basico}>
                    <Text style={styles.textosBasicos} onPress={() => navigation.navigate('ConfiguracoesTela')}>A outra página, clique no grid para voltar ao inicio </Text>
@@ -486,8 +503,6 @@ export function PesquisaInicial({ navigation }) {
                </View>*/
     );
 }
-
-const Stack = createNativeStackNavigator();
 
 export default PesquisaInicial;
 

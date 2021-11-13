@@ -32,13 +32,13 @@ import {
 import { color } from 'react-native-elements/dist/helpers';
 import axios from 'axios';
 
-export function FavoritosTela({ navigation }) {
+export function DetalhesCursoTela({ navigation }) {
     const Tab = createBottomTabNavigator();
     return (
 
         <View style={styles.basico}>
             <Button
-                title="Tela de Favoritos"
+                title="Tela de Curso"
                 onPress={() => navigation.navigate('PesquisaInicial')}
             />
 
@@ -46,6 +46,7 @@ export function FavoritosTela({ navigation }) {
     );
 }
 
+
 const Stack = createNativeStackNavigator();
 
-export default FavoritosTela;
+export default DetalhesCursoTela;

@@ -1,104 +1,151 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Button, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import API from '/src/helpers/ConsumoApi.js';
-import styles from './assets/styles/styles';
+import React, { useState, useContext } from 'react';
+import { View, Text } from 'react-native';
+import styles from './style';
+import * as GoogleLogin from 'expo-google-app-auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Facebook from 'expo-facebook';
+import { CredentialsContext } from '../../helpers/CredentialsContext';
+import { SocialIcon } from 'react-native-elements'
 
-function RecomendadosTela({ navigation }) {
-  return (
-    <View style={styles.basico}>
-      <Text style={styles.textosBasicos}>Página Inicial</Text>
-      <Button
-        title="Ir para outra página"
-        onPress={() => navigation.navigate('Detalhes')}
-      />
+const Login = ({ navigation }) => {
 
-    </View>
-  );
-}
-function FavoritosTela({ navigation }) {
-  return (
-    <View style={styles.basico}>
-      <Text style={styles.textosBasicos}>Página Inicial</Text>
-      <Button
-        title="Ir para outra página 1, pq essa é a 3"
-        onPress={() => navigation.navigate('Detalhes')}
-      />
+  const [message, setMessage] = useState();
+  const [messageType, setMessageType] = useState();
 
-    </View>
-  );
-}
+  const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
-function ConfiguracoesTela({ navigation }) {
+  async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
+    await fetch('http://192.168.15.47:3000/usuario', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nome: nome,
+        email: email,
+        idThirdParty: idThirdParty,
+        imageUrl: imageUrl,
+        provider: provider
+      })
+    });
+  };
 
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [googleSubmitting, settGoogleSubmitting] = useState(false);
 
-  useEffect(() => {
-    teste();
-  }, []);
+  const efetuarGoogleLogin = () => {
+    settGoogleSubmitting(true);
+    const config = {
+      androidClientId: '123256132157-h8hgctq206mcta0a35bplb4ocnj855on.apps.googleusercontent.com',
+      scopes: ['profile', 'email']
+    };
 
+    GoogleLogin.logInAsync(config)
+      .then((result) => {
+        const { type, user } = result;
 
+        if (type == 'success') {
+          const { email, name, photoUrl, id } = user;
+          persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
 
-  const teste = async () => {
+          AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
+
+          //gravar no mysql via api Caça-Cursos
+          gravarUsuario(name, email, id, photoUrl, "Google");
+
+          navigation.navigate('PesquisaInicial');
+
+        } else {
+          throw error;
+        }
+        settGoogleSubmitting(false);
+
+      })
+      .catch((error) => {
+        console.log(error.message);
+        settGoogleSubmitting(false);
+      });
+  };
+
+  async function efetuarFacebookLogin() {
     try {
-      const resposta = await API.MakeRequest('https://reactnative.dev/movies.json', 'GET');
-      console.log(resposta.description);
-      setData(resposta.movies);
-    } catch (error) {
+      await Facebook.initializeAsync({
+        appId: '1940992706081759'
+      });
+      const {
+        type,
+        token,
+        expirationDate,
+        permissions,
+        declinedPermissions,
+      } = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile', 'email'],
+      });
+      if (type === 'success') {
+
+        const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`);
+
+        const json = await response.json();
+        const { name, email, id, picture } = json;
+        console.log(json);
+
+        persistLogin({ json }, 'Login com Facebook bem sucedido', 'SUCCESS');
+
+        AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
+
+        //gravar no mysql via api Caça-Cursos
+        gravarUsuario(name, email, id, picture.data.url, "Facebook");
+
+        navigation.navigate('PesquisaInicial');
+      } else {
+        type === 'cancel'
+      }
+    }
+    catch (error) {
       console.log(error);
     }
-    finally {
-      setLoading(false);
+  };
+  const efetuarAppleLogin = () => {
+    try {
+      const credential = AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // signed in
+    } catch (e) {
+      if (e.code === 'ERR_CANCELED') {
+        // handle that the user canceled the sign-in flow
+      } else {
+        // handle other errors
+      }
     }
-  }
+  };
+
+  const persistLogin = (credentials, message, status) => {
+    AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
+      .then(() => {
+        setStoredCredentials(credentials);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <View style={styles.basico}>
-      {isLoading ? <ActivityIndicator /> : (
-        <FlatList style={styles.textosBasicos}
-          data={data}
-          keyExtractor={({ id }, index) => id}
-          renderItem={({ item }) => (
-            <Text onPress={() => navigation.navigate('Recomendados')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
-          )}
-        />
+      <Text style={styles.textosBasicos}>Caça Cursos</Text>
+      <Text style={styles.textoLogin}>Escolha sua plataforma para efetuar o login</Text>
+
+      {!googleSubmitting && (
+        <SocialIcon type='google' onPress={efetuarGoogleLogin} />
       )}
-      <Text style={styles.textosBasicos}>A outra página, clique no grid para voltar ao inicio </Text>
+      <SocialIcon type='facebook' onPress={efetuarFacebookLogin} />
+      <SocialIcon type='apple' onPress={efetuarAppleLogin} />
+
+
     </View>
-  );
-}
-
-const Tab = createBottomTabNavigator();
-
-function Login() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator initialRouteName="Recomendados" screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Recomendados') {
-            iconName = focused ? 'md-star' : 'md-star-outline';
-          } else if (route.name === 'Configuracoes') {
-            iconName = focused ? 'settings' : 'settings-outline';
-          } else if (route.name === 'Favoritos') {
-            iconName = focused ? 'heart' : 'heart-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#000',
-        tabBarInactiveTintColor: '#000',
-      })}
-      >
-        <Tab.Screen name="Recomendados" component={RecomendadosTela} />
-        <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-        <Tab.Screen name="Favoritos" component={FavoritosTela} />
-      </Tab.Navigator>
-    </NavigationContainer>
   );
 }
 
