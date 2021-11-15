@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import styles from './style';
 import * as GoogleLogin from 'expo-google-app-auth';
@@ -124,6 +124,7 @@ const Login = ({ navigation }) => {
   };
 
   const persistLogin = (credentials, message, status) => {
+    console.log(credentials);
     AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
       .then(() => {
         setStoredCredentials(credentials);
@@ -132,6 +133,38 @@ const Login = ({ navigation }) => {
         console.log(error);
       });
   };
+
+  const validarLogin = () => {
+
+  }
+
+
+  removerUsuarioCache = async () => {
+
+    try {
+      await AsyncStorage.removeItem(CacaCursoCredentials);
+      navigation.navigate("Login");
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  // carrega o json de usuario no cache do app no celular
+  onScreenLoad = async () => {
+    console.log("Caiu na função de load da página");
+    try {
+      const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+      if (usuarioCache !== null) {
+        console.log(usuarioCache);
+        navigation.navigate('PesquisaInicial');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    onScreenLoad();
+  }, []);
 
   return (
     <View style={styles.basico}>
