@@ -20,7 +20,7 @@ const Card = (props) => {
                 <Text style={styles.temaPrincipal}>tema abordado: {props.temaPrincipal}</Text>
                 <Button
                     style={styles.btn}
-                    onPress={() => Linking.openURL(props.link)}
+                    onPress={() => props.navigateTo()}
                     title="Acessar curso"
                     color="#841584"
                 />

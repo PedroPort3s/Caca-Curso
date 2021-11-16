@@ -1,85 +1,201 @@
-import React, { useEffect } from 'react'
-import { ScrollView, StyleSheet, Text, TextInput, View, StatusBar, SectionList, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import axios from 'axios';
 
-import Icon from '../components/iconAntDesign'
+import IconAntDesign from '../components/iconAntDesign'
+import IconIonicons from '../components/iconIonicons'
+import BtnWithIcon from '../components/btnWithIcon'
 import Comentario from '../components/comentario'
 
 console.log('renderizou')
 
-const props = {
-    funcaoVerificaBanco: () => {
-        console.log('aqui pode ser um local para armazenar a função parar verificar no banco,' +
-            'tem de ter um controle de quando será executada')
-    },
-    titulo: 'titulo',
-    descricao: "Descrição do curso _________________________ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-    listComentarios: [
-        {
-            id: 1,
-            nomeAuthor: 'Vitor',
-            comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-        },
-        {
-            id: 2,
-            nomeAuthor: 'Carlos',
-            comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-        },
-        {
-            id: 3,
-            nomeAuthor: 'Cleyton',
-            comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-        },
-    ]
-}
+// const navigation = {
+//     params: {
+//         funcaoVerificaBanco: () => {
+//             console.log('aqui pode ser um local para armazenar a função parar verificar no banco,' +
+//                 'tem de ter um controle de quando será executada')
+//         },
+//         titulo: 'titulo',
+//         descricao: "Descrição do curso _________________________ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+//         like: 543,
+//         dislike: 555,
+//         listComentarios: [
+//             {
+//                 id: 1,
+//                 nomeAuthor: 'Vitor',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 2,
+//                 nomeAuthor: 'Carlos',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 3,
+//                 nomeAuthor: 'Cleyton',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 3,
+//                 nomeAuthor: 'Cleyton',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 3,
+//                 nomeAuthor: 'Cleyton',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 3,
+//                 nomeAuthor: 'Cleyton',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//             {
+//                 id: 3,
+//                 nomeAuthor: 'Cleyton',
+//                 comentario: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//             },
+//         ]
+//     }
+// }
 
 // dai tem de brincar com o props depois, n sei daonde vira os dados então vou pressupor que estão vindo do props
 // opa, acabei de perceber que iremos consumir da nossa propria api, saco
-// const Detalhes = (props) => {
-const Detalhes = () => {
+// const Detalhes = ({route}) => {
+
+const Detalhes = (props) => {
+
+    let newCurso = props.route.params.curso
+
+    useEffect(() => {
+        newCurso = {
+            Nome: props.route.params.curso.nome,
+            Link: props.route.params.curso.link,
+            TemaPrincipal: props.route.params.curso.temaPrincipal,
+            UrlImagem: props.route.params.curso.urlImagem,
+            Keywords: props.route.params.curso.keywords
+        }
+        verificaCurso(props.route.params.curso.link);
+    }, []);
+
+    const [curso, setCurso] = useState(newCurso)
+
+    console.log("Curso: ", curso)
+
+    const verificaCurso = async (curso_link) => {
+        console.log("link do curso: ", curso_link);
+        try {
+            const url = 'http://192.168.1.103:3000/curso/link';
+
+            console.log(url);
+
+            await axios.get(url, {
+                headers: {
+                    link: curso_link
+                }
+            }).then((response) => {
+                console.log('Data da consulta por link: ', response.data.objeto);
+                if (response.data.objeto) {
+                    setCurso(response.data.objeto)
+                } else {
+                    createNewCurso()
+                }
+            }).catch((err) => {
+                console.log("Erro ao consultar url: " + url, err)
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        finally {
+            // setIsLoading(false);
+        }
+    };
+
+    const createNewCurso = () => {
+        const url = 'http://192.168.1.103:3000/curso';
+
+        console.log("curso que será criado: ", curso)
+
+        axios.post(url, { curso }).then((response) => {
+            console.log('objeto do create: ', response.data.objeto);
+            setCurso(response.data.objeto);
+        }).catch((err) => {
+            console.log("Erro ao consultar url: " + url, err)
+        });
+    }
 
     return (
         <SafeAreaView>
-            <ScrollView>
+            <ScrollView
+                contentContainerStyle={{
+                    flexGrow: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                }}>
                 <View style={styles.container}>
                     <Text style={{ ...styles.box, ...styles.title }} >
-                        Titulo do curso
+                        {curso.Nome}
                     </Text>
                     <Text
                         style={styles.box}
                         numberOfLines={6}
                     >
-                        {props.descricao}
+                        {curso.Keywords}
                     </Text>
                     <View style={styles.likeContainer}>
                         <View style={styles.likeBox}>
-                            <Icon icon='like1' size={50} />
-                            <Text style={{ marginTop: 10 }}>999</Text>
+                            <IconAntDesign icon='like1' size={50} />
+                            <Text style={{ marginTop: 10 }}>
+                                {curso.Like ? curso.Like : 0}
+                            </Text>
                         </View>
                         <View style={styles.likeBox}>
-                            <Icon icon='dislike1' size={50} />
-                            <Text style={{ marginTop: 10 }}>999</Text>
+                            <IconAntDesign icon='dislike1' size={50} />
+                            <Text style={{ marginTop: 10 }}>
+                                {curso.Dislike ? curso.Dislike : 0}
+                            </Text>
                         </View>
                     </View>
                     <View style={styles.comentarioContainer}>
-                        <ScrollView style={{ flex: 1, height: '100%', width: '100%' }}>
+                        <Text>Avaliações</Text>
+                        {curso.listComentarios ?
+                            <Text style={{ ...styles.box, ...styles.title }}>
+                                Sem Avaliações
+                            </Text>
+                            : null}
+                        <ScrollView>
                             {
-                                props.listComentarios.map((item, index) => {
+                                curso.listComentarios ? curso.listComentarios.map((item, index) => {
                                     return (
                                         <View key={index}>
                                             <Comentario obj={item} />
                                         </View>
                                     )
-                                })
+                                }) : <Text style={{ ...styles.box, ...styles.title }}>Sem Avaliações</Text>
                             }
                         </ScrollView>
                     </View>
                     <View style={styles.acoesContainer}>
-                        <Text>Favoritar e ver curso</Text>
+                        <BtnWithIcon
+                            onPress={() => {
+                                console.log('favoritar pressionado')
+                            }}
+                            titulo='Favoritar'>
+                            <IconIonicons icon='heart-circle' size={30} />
+                        </BtnWithIcon>
+                        <BtnWithIcon
+                            onPress={() => {
+                                console.log('Ver curso pressionado')
+                            }}
+                            titulo='Ver curso'>
+                            <IconIonicons icon='arrow-forward-circle' size={30} />
+                        </BtnWithIcon>
                     </View>
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
+
     )
 }
 
@@ -105,10 +221,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginTop: 30,
         width: '100%',
-        height: '100%'
+        height: '70%',
+        alignItems: 'center'
     },
     acoesContainer: {
-        flex: 1
+        flex: 1,
+        flexDirection: 'row',
+        marginVertical: 20,
+        alignItems: 'center'
     },
     likeBox: {
         alignItems: 'center',

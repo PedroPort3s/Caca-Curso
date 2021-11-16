@@ -21,7 +21,7 @@ const Login = ({ navigation }) => {
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
-    await fetch('http://192.168.1.102:3000/usuario', {
+    await fetch('http://192.168.1.103:3000/usuario', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -161,10 +161,10 @@ function app() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Detalhes" component={Detalhes} />
-        {/* <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="PesquisaInicial" component={PesquisaInicial} />
-        <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} /> */}
+        <Stack.Screen name="Detalhes" component={Detalhes} />
+        <Stack.Screen name="ConfiguracoesTela" component={ConfiguracoesTela} />
       </Stack.Navigator>
     </NavigationContainer>
   );

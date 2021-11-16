@@ -355,13 +355,13 @@ export function PesquisaInicial({ navigation }) {
     async function BuscarCursos() {
         console.log(palavraChave);
         try {
-            const url = 'http://192.168.1.102:3000/curso?p=' + encodeURIComponent(palavraChave);
+            const url = 'http://192.168.1.103:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
 
             console.log(url);
 
-            await axios.get(url).then((response) => {
-                console.log(response);
-                console.log(response.data.objeto);
+            await axios.get(url).catch((err) => {
+                console.log("Erro ao consultar url: " + url, err)
+            }).then((response) => {
                 setData(response.data.objeto);
             });
 
@@ -437,17 +437,22 @@ export function PesquisaInicial({ navigation }) {
             )} */}
 
             <ScrollView style={styles.container}>
-                {data.map((item) => (
-                    <View key={item.link}>
-                        <Card
-                            nome={item.nome}
-                            keywords={item.keywords}
-                            link={item.link}
-                            temaPrincipal={item.temaPrincipal}
-                            urlImagem={item.urlImagem}
-                        />
-                    </View>
-                ))}
+                {
+                    data.map((item) => (
+                        <View key={item.link}>
+                            <Card
+                                nome={item.nome}
+                                keywords={item.keywords}
+                                link={item.link}
+                                temaPrincipal={item.temaPrincipal}
+                                urlImagem={item.urlImagem}
+                                navigateTo={() => {
+                                    navigation.navigate("Detalhes", { curso: item })
+                                }}
+                            />
+                        </View>
+                    ))
+                }
             </ScrollView>
 
 
