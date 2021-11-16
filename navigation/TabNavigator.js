@@ -1,16 +1,17 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { MainStackNavigator, ContactStackNavigator, RecomendadoStackNavigator} from "./StackNavigator";
+import { MainStackNavigator, ContactStackNavigator, RecomendadoStackNavigator, FavoritoStackNavigator} from "./StackNavigator";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
-      <Tab.Screen name="Favoritos" component={MainStackNavigator} />
+    <Tab.Navigator screenOptions={{headerShown: false}}>     
+      <Tab.Screen name="Pesquisa" component={MainStackNavigator} />
+      <Tab.Screen name="Favoritos" component={FavoritoStackNavigator} />
       <Tab.Screen name="Configuracoes" component={ContactStackNavigator} />
-      <Tab.Screen name="RecomendadosTela" component={RecomendadoStackNavigator} />
+      <Tab.Screen name="Recomendados" component={RecomendadoStackNavigator} />
     </Tab.Navigator>
   );
 };

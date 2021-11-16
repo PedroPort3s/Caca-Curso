@@ -350,7 +350,6 @@ const PesquisaInicial = ({ navigation }) => {
     const [palavraChave, setPalavraChave] = useState('');
 
     async function BuscarCursos() {
-        console.log(palavraChave);
         try {
             const url = 'http://192.168.15.47:3000/curso?p=' + encodeURIComponent(palavraChave);
 

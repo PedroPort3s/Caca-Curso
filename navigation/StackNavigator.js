@@ -5,6 +5,8 @@ import Login from "../src/UI/login";
 import PesquisaInicial from "../src/UI/pesquisa";
 import Configuracoes from "../src/UI/configuracoes";
 import RecomendadosTela from "../src/UI/recomendados";
+import FavoritosTela from "../src/UI/favoritos";
+import UsuarioTela from "../src/UI/usuario";
 
 const Stack = createStackNavigator();
 
@@ -19,11 +21,13 @@ const screenOptionStyle = {
 
 const MainStackNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={screenOptionStyle}>
-      <Stack.Screen name="Login" component={Login} />
+    <Stack.Navigator screenOptions={screenOptionStyle} initialRouteName="Login">
+      <Stack.Screen name="LoginTela" component={Login} />
       <Stack.Screen name="PesquisaInicial" component={PesquisaInicial} />
       <Stack.Screen name="ConfiguracoesTela" component={Configuracoes} />
       <Stack.Screen name="RecomendadosTela" component={RecomendadosTela} />
+      <Stack.Screen name="FavoritosTela" component={FavoritosTela} />
+      <Stack.Screen name="UsuarioTela" component={UsuarioTela} />
     </Stack.Navigator>
   );
 }
@@ -39,11 +43,19 @@ const ContactStackNavigator = () => {
 const RecomendadoStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={screenOptionStyle}>
-      <Stack.Screen name="Recomendados" component={RecomendadosTela} />
+      <Stack.Screen name="Recomendado" component={RecomendadosTela} />
+    </Stack.Navigator>
+  );
+}
+
+const FavoritoStackNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Screen name="Favorito" component={FavoritosTela} />
     </Stack.Navigator>
   );
 }
 
 
 
-export { MainStackNavigator, ContactStackNavigator, RecomendadoStackNavigator };
+export { MainStackNavigator, ContactStackNavigator, RecomendadoStackNavigator,FavoritoStackNavigator  };

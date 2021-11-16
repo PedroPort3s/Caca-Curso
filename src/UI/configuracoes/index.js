@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 // import { ActivityIndicator, FlatList, Button, View, Text, TextInput } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import API from '../../helpers/ConsumoApi';
 import styles from './style.js';
+import Button from '../components/Button';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 import {
     Input,
     SearchBar,
     Icon,
-    Button,
     ThemeProvider,
     InputProps,
 } from 'react-native-elements';
@@ -45,84 +48,116 @@ const SearchBarCustom = (props) => {
     return <SearchBar value={value} onChangeText={setValue} {...props} />;
 };
 
+const removerUsuarioCache = async () => {
 
-
-
-
-// export function ConfiguracoesTela({ navigation }) {
-
-//     const [isLoading, setLoading] = useState(true);
-//     const [data, setData] = useState([]);
-
-//     useEffect(() => {
-//         teste();
-//     }, []);
-
-
-
-//     const teste = async () => {
-//         try {
-//             const resposta = await API.MakeRequest('https://reactnative.dev/movies.json', 'GET');
-//             console.log(resposta.description);
-//             setData(resposta.movies);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//         finally {
-//             setLoading(false);
-//         }
-//     }
-
-//     // return (
-//     //     <View style={styles.basico}>
-//     //         {isLoading ? <ActivityIndicator /> : (
-//     //             <FlatList style={styles.textosBasicos}
-//     //                 data={data}
-//     //                 keyExtractor={({ id }, index) => id}
-//     //                 renderItem={({ item }) => (
-//     //                     <Text onPress={() => navigation.navigate('Pesquisa')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
-//     //                 )}
-//     //             />
-//     //         )}
-//     //         <Text style={styles.textosBasicos}>A outra página, clique no grid para voltar ao inicio </Text>
-//     //     </View>
-//     // );
-// }
+    try {
+        await AsyncStorage.removeItem('CacaCursoCredentials');
+        navigation.navigate("LoginTela");
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
 
 const Tab = createBottomTabNavigator();
 
-export default function ConfiguracoesTela({navigation}) {
+export default function ConfiguracoesTela({ navigation }) {
+    // carrega o json de usuario no cache do app no celular
+    onScreenLoad = async () => {
+        console.log("Caiu na função de load da página de configurações");
+        try {
+            const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+            if (usuarioCache !== null) {
+                console.log(usuarioCache);
+
+                console.log(" Usuario setado configs: " + usuarioCache);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        onScreenLoad();
+    }, []);
     return (
 
-        <View style={styles.basico}>
+        // <View style={styles.basico}>
+        //     <Button
+        //         title="Configs"
+        //         onPress={() => navigation.navigate('PesquisaInicial')}
+        //     />
+
+        // </View>
+        <View style={styles.container}>
+            {/* ORANGE BUTTON */}
+
             <Button
-                title="Configs"
-                onPress={() => navigation.navigate('PesquisaInicial')}
+                text="Favoritos"
+                buttonCustomStyles={{
+                    backgroundColor: 'yellow',
+                    borderRadius: 50,
+                    marginTop: 10
+                }}
+                // textCustomStyles={{
+                //     color: "#505050"
+                // }}
+                onClick={() => { alert("Favoritos!") }}
+            />
+
+            <Button
+                text="Recomendados"
+                buttonCustomStyles={{
+                    backgroundColor: 'yellow',
+                    borderRadius: 50,
+                    marginTop: 10
+                }}
+                // textCustomStyles={{
+                //     color: "#505050"
+                // }}
+                onClick={() => { alert("Recomendados!") }}
+            />
+
+            <Button
+                text="Perfil"
+                buttonCustomStyles={{
+                    backgroundColor: 'yellow',
+                    borderRadius: 50,
+                    marginTop: 10
+                }}
+                // textCustomStyles={{
+                //     color: "#505050"
+                // }}
+                onClick={() => navigation.navigate('UsuarioTela')}
+            />
+
+            <Button
+                text="Login"
+                buttonCustomStyles={{
+                    backgroundColor: "#6495ED",
+                    borderRadius: 50,
+                    marginTop: 10
+                }}
+                // textCustomStyles={{
+                //     color: "#505050"
+                // }}
+                onClick={() => { alert("Perfil!") }}
+            />
+
+
+            <Button
+                text="Sair"
+                buttonCustomStyles={{
+                    backgroundColor: 'red',
+                    borderRadius: 50,
+                    marginTop: 10
+                }}
+                // textCustomStyles={{
+                //     color: "#505050"
+                // }}
+                onClick={() => { alert("Perfil!") }}
             />
 
         </View>
-        // <Tab.Navigator initialRouteName="Configuracoes" screenOptions={({ route }) => ({
-        //     tabBarIcon: ({ focused, color, size }) => {
-        //         let iconName;
-
-        //         if (route.name === 'Recomendados') {
-        //             iconName = focused ? 'md-star' : 'md-star-outline';
-        //         } else if (route.name === 'Configuracoes') {
-        //             iconName = focused ? 'settings' : 'settings-outline';
-        //         } else if (route.name === 'Favoritos') {
-        //             iconName = focused ? 'heart' : 'heart-outline';
-        //         }
-
-        //         return <Ionicons name={iconName} size={size} color={color} />;
-        //     },
-        //     tabBarActiveTintColor: '#000',
-        //     tabBarInactiveTintColor: '#000',
-        // })}
-        // >
-        //     {/* <Tab.Screen name="Recomendados" component={PesquisaTela} /> */}
-        //     <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-        //     {/* <Tab.Screen name="Favoritos" component={FavoritosTela} /> */}
-        // </Tab.Navigator>
     );
 }
 

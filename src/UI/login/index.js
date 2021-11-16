@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Facebook from 'expo-facebook';
 import { CredentialsContext } from '../../helpers/CredentialsContext';
 import { SocialIcon } from 'react-native-elements'
+import axios from 'axios';
 
 const Login = ({ navigation }) => {
 
@@ -51,7 +52,8 @@ const Login = ({ navigation }) => {
           AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
 
           //gravar no mysql via api Caça-Cursos
-          gravarUsuario(name, email, id, photoUrl, "Google");
+          // gravarUsuario(name, email, id, photoUrl, "Google");
+          validarLogin(name, email, id, photoUrl, "Google");
 
           navigation.navigate('PesquisaInicial');
 
@@ -94,7 +96,8 @@ const Login = ({ navigation }) => {
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
 
         //gravar no mysql via api Caça-Cursos
-        gravarUsuario(name, email, id, picture.data.url, "Facebook");
+        // gravarUsuario(name, email, id, picture.data.url, "Facebook");
+
 
         navigation.navigate('PesquisaInicial');
       } else {
@@ -134,26 +137,53 @@ const Login = ({ navigation }) => {
       });
   };
 
-  const validarLogin = () => {
+  const validarLogin = async (name, email, id, picture, provider) => {
+    console.log("Caiu no validar");
+    console.log(email);
+    try {
+      const url = 'http://192.168.15.47:3000/usuario/carregar/' + encodeURIComponent(email);
 
-  }
+      await axios.get(url).then((response) => {
+        // setData(response.data.objeto);
+        if (response.data == null) {
+          // não carregou então grava
+          //gravar no mysql via api Caça-Cursos
+          
+          gravarUsuario(name, email, id, picture, provider);
+        }
+        else {
+          //vai pra pesquisa pq já ta certo
+          console.log("carregou o usuario com e-mail - " + email);
+          navigation.navigate('PesquisaInicial');
+        }
+      });
+
+      // const resposta = await API.MakeRequest('http://localhost:3000/curso?p=java', 'GET');
+      // console.log(resposta);
+      // setData(resposta.movies);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
-  removerUsuarioCache = async () => {
+  const removerUsuarioCache = async () => {
 
     try {
-      await AsyncStorage.removeItem(CacaCursoCredentials);
-      navigation.navigate("Login");
+      await AsyncStorage.removeItem('CacaCursoCredentials');
+      navigation.navigate("LoginTela");
     }
     catch (error) {
       console.log(error);
     }
-  }
+  };
+
   // carrega o json de usuario no cache do app no celular
   onScreenLoad = async () => {
     console.log("Caiu na função de load da página");
     try {
       const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+      console.log("USUARIO NO LOGIN " + usuarioCache);
       if (usuarioCache !== null) {
         console.log(usuarioCache);
         navigation.navigate('PesquisaInicial');

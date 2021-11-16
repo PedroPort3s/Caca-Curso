@@ -1,51 +1,116 @@
-import React, { useState } from 'react';
-import styles from '../../../assets/styles/styles.js';
-// import { Pesquisa, ConfiguracoesTela, FavoritosTela, PesquisaTela } from './src/UI/pesquisa/index.js'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useState, useContext, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Card from '../components/card'
-
-
-import {
-    Input,
-    SearchBar,
-    Icon,
-    Button,
-    ThemeProvider,
-    InputProps,
-} from 'react-native-elements';
+import styles from './style.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
-    View,
-    ScrollView,
-    StyleSheet,
     Text,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    Vibration,
-    ActivityIndicator,
-    FlatList,
-    TextInput,
-    SafeAreaView
+    View,
+    Image,
+    TouchableOpacity
 } from 'react-native';
-import { color } from 'react-native-elements/dist/helpers';
-import axios from 'axios';
 
-export function UsuarioTela({ navigation }) {
-    const Tab = createBottomTabNavigator();
+
+
+const UsuarioTela = ({ navigation }) => {
+
+    const [nomeUsuario, setNomeUsuario] = useState();
+    const [emailUsuario, setEmailUsuario] = useState();
+    const [photoUsuario, setPhotoUsuario] = useState();
+
+    const removerUsuarioCache = async () => {
+        try {
+            await AsyncStorage.removeItem('CacaCursoCredentials');
+            navigation.navigate("LoginTela");
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+    const navegarFavoritos = async () => {
+        try {
+            navigation.navigate("FavoritosTela");
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+    const navegarRecomendados = async () => {
+        try {
+            navigation.navigate("RecomendadosTela");
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+
+    const setarUsuario = (nomeUsuario, emailUsuario, photoUsuario) => {
+
+        setNomeUsuario(nomeUsuario);
+        setEmailUsuario(emailUsuario);
+        setPhotoUsuario(photoUsuario);
+        // console.log(" Usuario setado : " + nomeUsuario);
+        // console.log(" email Usuario setado : " + emailUsuario);
+        // console.log(" photo Usuario setado : " + photoUsuario);
+    }
+    // carrega o json de usuario no cache do app no celular
+    onScreenLoad = async () => {
+        console.log("Caiu na função de load da página de usuario");
+        try {
+            const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+            if (usuarioCache !== null) {
+                // console.log(usuarioCache);
+                // console.log("Caiu sfsdfsdf");
+
+                // console.log("Object usuario cache ------- ", {nome: "Cuvaldo"})
+                // const teste = JSON.parse(usuarioCache.object);
+                // console.log("Mostrando como printou o teste ------- " + teste.object); 
+                // setUsuario(JSON.parse(usuarioCache));
+
+                let parsed = JSON.parse(usuarioCache);
+                // console.log("Parsed teste " + parsed.name);
+                // console.log("Parsed teste 2 " + parsed.email);
+                // console.log("Parsed teste 3 " + parsed.photoUrl);
+
+                setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
+                // setNomeUsuario(parsed.name);
+                // console.log(" Usuario setado : " + nomeUsuario);
+            }
+            else {
+
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        onScreenLoad();
+    }, []);
+
     return (
 
-        <View style={styles.basico}>
-            <Button
-                title="Tela de Usuário"
-                onPress={() => navigation.navigate('PesquisaInicial')}
-            />
+        <View style={styles.container}>
+            <View style={styles.header}></View>
+            <Image style={styles.avatar} source={{ uri: photoUsuario }} />
+            <View style={styles.body}>
+                <View style={styles.bodyContent}>
+                    <Text style={styles.name}> {nomeUsuario}</Text>
+                    <Text style={styles.info}>Um belo de um ser humano</Text>
+                    <Text style={styles.description}>{emailUsuario}</Text>
 
+                    <TouchableOpacity style={styles.buttonContainer} onPress={navegarFavoritos}>
+                        <Text>Favoritos</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonContainer} onPress={navegarRecomendados}>
+                        <Text>Recomendados</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonContainer} onPress={removerUsuarioCache}> 
+                        <Text>Logout</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     );
 }
-
-const Stack = createNativeStackNavigator();
-
 export default UsuarioTela;
