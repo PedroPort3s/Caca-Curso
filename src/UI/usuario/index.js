@@ -68,12 +68,29 @@ const UsuarioTela = ({ navigation }) => {
                 // console.log("Mostrando como printou o teste ------- " + teste.object); 
                 // setUsuario(JSON.parse(usuarioCache));
 
+                
+                // console.log("Usuário cache facebook que chegou ao usuario: " + usuarioCache);
                 let parsed = JSON.parse(usuarioCache);
+                // console.log("Image do user facebook: -- " + parsed.json.picture.data.url);
+
+                //Facebook setagem
+                if(parsed.json !== undefined){
+                    //facebook - padrão de store do facebook
+                    console.log("Caiu no facebook");
+                    setarUsuario(parsed.json.name, parsed.json.email, parsed.json.picture.data.url);
+                }
+                else{
+                    //google - padrão de store do google
+                    console.log("Caiu no google");
+                    setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
+                }
+
+
                 // console.log("Parsed teste " + parsed.name);
                 // console.log("Parsed teste 2 " + parsed.email);
                 // console.log("Parsed teste 3 " + parsed.photoUrl);
-
-                setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
+                
+                //setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
                 // setNomeUsuario(parsed.name);
                 // console.log(" Usuario setado : " + nomeUsuario);
             }
