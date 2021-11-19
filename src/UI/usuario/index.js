@@ -60,19 +60,9 @@ const UsuarioTela = ({ navigation }) => {
         try {
             const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
             if (usuarioCache !== null) {
-                // console.log(usuarioCache);
-                // console.log("Caiu sfsdfsdf");
-
-                // console.log("Object usuario cache ------- ", {nome: "Cuvaldo"})
-                // const teste = JSON.parse(usuarioCache.object);
-                // console.log("Mostrando como printou o teste ------- " + teste.object); 
-                // setUsuario(JSON.parse(usuarioCache));
-
-                
-                // console.log("Usuário cache facebook que chegou ao usuario: " + usuarioCache);
+               
                 let parsed = JSON.parse(usuarioCache);
-                // console.log("Image do user facebook: -- " + parsed.json.picture.data.url);
-
+                
                 //Facebook setagem
                 if(parsed.json !== undefined){
                     //facebook - padrão de store do facebook

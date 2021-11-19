@@ -96,8 +96,7 @@ const Login = ({ navigation }) => {
         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
 
         //gravar no mysql via api Caça-Cursos
-        // gravarUsuario(name, email, id, picture.data.url, "Facebook");
-
+        validarLogin(name, email, id, picture.data.url, "Facebook");
 
         navigation.navigate('PesquisaInicial');
       } else {
