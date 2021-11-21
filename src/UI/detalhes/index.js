@@ -158,7 +158,7 @@ const Detalhes = (props) => {
                         </View>
                     </View>
                     <View style={styles.comentarioContainer}>
-                        <Text>Avaliações</Text>
+                        <Text>Comentários</Text>
                         {curso.listComentarios ?
                             <Text style={{ ...styles.box, ...styles.title }}>
                                 Sem Avaliações
