@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, Text, Linking } from 'react-native'
 import { Button } from 'react-native-elements'
 
 const Card = (props) => {
+
     const urlImagem = props.urlImagem ? props.urlImagem : 'https://brasilpaisdigital.com.br/wp-content/uploads/2020/03/online-gratuitos.png'
 
     return (
@@ -20,7 +21,8 @@ const Card = (props) => {
                 <Text style={styles.temaPrincipal}>tema abordado: {props.temaPrincipal}</Text>
                 <Button
                     style={styles.btn}
-                    onPress={() => props.navigateTo()}
+                    // onPress={() => Linking.openURL(props.link)}
+                    onPress={() => props.CarregarCurso()}
                     title="Acessar curso"
                     color="#841584"
                 />

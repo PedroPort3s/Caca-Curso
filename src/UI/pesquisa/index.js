@@ -164,18 +164,15 @@
 //   export default app;
 
 
-import React, { useState, useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useState, useContext, useEffect } from 'react';
 import styles from '../../../assets/styles/styles.js';
 // import { Pesquisa, ConfiguracoesTela, FavoritosTela, PesquisaTela } from './src/UI/pesquisa/index.js'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Pesquisa, ConfiguracoesTela } from '../../UI/configuracoes/index.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ConfiguracoesTela2 from '../configuracoes/index.js';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import API from '../../helpers/ConsumoApi.js';
 import Card from '../components/card'
-
+import ConfiguracoesTela from '../configuracoes';
+import DetalhesCursoTela from '../curso';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {
     Input,
@@ -222,138 +219,30 @@ const SearchBarCustom = (props) => {
     return <SearchBar value={value} onChangeText={setValue} {...props} />;
 };
 
-export function PesquisaInicial({ navigation }) {
 
-    //   const [message, setMessage] = useState();
-    //   const [messageType, setMessageType] = useState();
+const PesquisaInicial = ({ navigation }) => {
 
-    //   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
-
-    //   async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
-    //     await fetch('http://192.168.15.47:3000/usuario', {
-    //       method: 'POST',
-    //       headers: {
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify({
-    //         nome: nome,
-    //         email: email,
-    //         idThirdParty: idThirdParty,
-    //         imageUrl: imageUrl,
-    //         provider: provider
-    //       })
-    //     });
-    //   };
-
-    //   const [googleSubmitting, settGoogleSubmitting] = useState(false);
-
-    //   const efetuarGoogleLogin = () => {
-    //     settGoogleSubmitting(true);
-    //     const config = {
-    //       androidClientId: '123256132157-h8hgctq206mcta0a35bplb4ocnj855on.apps.googleusercontent.com',
-    //       scopes: ['profile', 'email']
-    //     };
-
-    //     GoogleLogin.logInAsync(config)
-    //       .then((result) => {
-    //         const { type, user } = result;
-
-    //         if (type == 'success') {
-    //           const { email, name, photoUrl, id } = user;
-    //           persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
-
-    //           AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
-
-    //           //gravar no mysql via api Caça-Cursos
-    //           gravarUsuario(name, email, id, photoUrl, "Google");
-
-    //           navigation.navigate('Pesquisa');
-
-    //         } else {
-    //           throw error;
+    // onScreenLoad = async () => {
+    //     console.log("Caiu na função de load da página");
+    //     try {
+    //         const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+    //         console.log("USUARIO NO LOGIN " + usuarioCache);
+    //         if (usuarioCache !== null) {
+    //             CodePush.restartApp();
     //         }
-    //         settGoogleSubmitting(false);
-
-    //       })
-    //       .catch((error) => {
-    //         console.log(error.message);
-    //         settGoogleSubmitting(false);
-    //       });
-    //   };
-
-    //   async function efetuarFacebookLogin() {
-    //     try {
-    //       await Facebook.initializeAsync({
-    //         appId: '1940992706081759'
-    //       });
-    //       const {
-    //         type,
-    //         token,
-    //         expirationDate,
-    //         permissions,
-    //         declinedPermissions,
-    //       } = await Facebook.logInWithReadPermissionsAsync({
-    //         permissions: ['public_profile', 'email'],
-    //       });
-    //       if (type === 'success') {
-
-    //         const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`);
-
-    //         const json = await response.json();
-    //         const { name, email, id, picture } = json;
-    //         console.log(json);
-
-    //         persistLogin({ json }, 'Login com Facebook bem sucedido', 'SUCCESS');
-
-    //         AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Facebook bem sucedido: " + res));
-
-    //         //gravar no mysql via api Caça-Cursos
-    //         gravarUsuario(name, email, id, picture.data.url, "Facebook");
-
-    //         navigation.navigate('Pesquisa');
-    //       } else {
-    //         type === 'cancel'
-    //       }
-    //     }
-    //     catch (error) {
-    //       console.log(error);
-    //     }
-    //   };
-    //   const efetuarAppleLogin = () => {
-    //     try {
-    //       const credential = AppleAuthentication.signInAsync({
-    //         requestedScopes: [
-    //           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-    //           AppleAuthentication.AppleAuthenticationScope.EMAIL,
-    //         ],
-    //       });
-    //       // signed in
-    //     } catch (e) {
-    //       if (e.code === 'ERR_CANCELED') {
-    //         // handle that the user canceled the sign-in flow
-    //       } else {
-    //         // handle other errors
-    //       }
-    //     }
-    //   };
-
-    //   const persistLogin = (credentials, message, status) => {
-    //     AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
-    //       .then(() => {
-    //         setStoredCredentials(credentials);
-    //       })
-    //       .catch((error) => {
+    //     } catch (error) {
     //         console.log(error);
-    //       });
-    //   };
+    //     }
+    // }
+    // useEffect(() => {
+    //     onScreenLoad();
+    // }, []);
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [palavraChave, setPalavraChave] = useState('');
 
     async function BuscarCursos() {
-        console.log(palavraChave);
         try {
             const url = 'http://192.168.1.103:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
 
@@ -377,7 +266,13 @@ export function PesquisaInicial({ navigation }) {
 
     };
 
-    const Tab = createBottomTabNavigator();
+    async function CarregarCurso() {
+        try {
+            navigation.navigate('DetalhesCursoTela', { curso: item });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
 
@@ -415,7 +310,7 @@ export function PesquisaInicial({ navigation }) {
                     borderColor: 'transparent',
                     borderWidth: 0,
                     borderRadius: 30,
-                    marginTop: 30
+                    marginTop: 50
                 }}
                 containerStyle={{
                     width: 200,
@@ -437,31 +332,41 @@ export function PesquisaInicial({ navigation }) {
             )} */}
 
             <ScrollView style={styles.container}>
-                {
-                    data.map((item) => (
-                        <View key={item.link}>
-                            <Card
-                                nome={item.nome}
-                                keywords={item.keywords}
-                                link={item.link}
-                                temaPrincipal={item.temaPrincipal}
-                                urlImagem={item.urlImagem}
-                                navigateTo={() => {
-                                    navigation.navigate("Detalhes", { curso: item })
-                                }}
-                            />
-                        </View>
-                    ))
-                }
+
+                {data.map((item) => (
+                    <View key={item.link}>
+                        <Card
+                            nome={item.nome}
+                            keywords={item.keywords}
+                            link={item.link}
+                            temaPrincipal={item.temaPrincipal}
+                            urlImagem={item.urlImagem}
+                            CarregarCurso={CarregarCurso}
+                        />
+                    </View>
+                ))}
             </ScrollView>
 
+            {/* <Tab.Navigator initialRouteName="Pesquisas" screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
 
-            {/* <Button
-                title="Ir para outra página"
-                onPress={() => navigation.navigate('Detalhes')}
-            /> */}
-            {/* <TextInput style={styles.textInput} /> */}
+                    if (route.name === 'Recomendados') {
+                        iconName = focused ? 'md-star' : 'md-star-outline';
+                    } else if (route.name === 'Configuracoes') {
+                        iconName = focused ? 'settings' : 'settings-outline';
+                    } else if (route.name === 'Favoritos') {
+                        iconName = focused ? 'heart' : 'heart-outline';
+                    }
 
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                },
+                tabBarActiveTintColor: '#000',
+                tabBarInactiveTintColor: '#000',
+            })}
+            >
+                <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
+            </Tab.Navigator> */}
         </View>
         /*       <View style={styles.basico}>
                    <Text style={styles.textosBasicos} onPress={() => navigation.navigate('ConfiguracoesTela')}>A outra página, clique no grid para voltar ao inicio </Text>
@@ -491,8 +396,6 @@ export function PesquisaInicial({ navigation }) {
                </View>*/
     );
 }
-
-const Stack = createNativeStackNavigator();
 
 export default PesquisaInicial;
 
