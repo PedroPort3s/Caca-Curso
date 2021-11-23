@@ -38,6 +38,14 @@ const styles = StyleSheet.create({
         width: 300,
         flexDirection: 'row',
     },
+    title: {
+        color: 'white',
+        fontSize: 15,
+    },
+    temaPrincipal: {
+        color: 'white',
+        fontSize: 10,
+    },
     containerImg: {
         height: 100,
         width: 100

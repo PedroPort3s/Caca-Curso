@@ -1,128 +1,97 @@
 import React, { useEffect, useState } from 'react';
-// import { ActivityIndicator, FlatList, Button, View, Text, TextInput } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import API from '../../helpers/ConsumoApi';
 import styles from './style.js';
-import {
-    Input,
-    SearchBar,
-    Icon,
-    Button,
-    ThemeProvider,
-    InputProps,
-} from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
-    View,
     ScrollView,
-    StyleSheet,
     Text,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    Vibration,
-    ActivityIndicator,
-    FlatList
+    View,
 } from 'react-native';
+import axios from 'axios';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Card from '../components/card';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const dummySearchBarProps = {
-    showLoading: true,
-    onFocus: () => console.log('focus'),
-    onBlur: () => console.log('blur'),
-    onCancel: () => console.log('cancel'),
-    onClear: () => console.log('cleared'),
-};
+const RecomendadosTela = ({ navigation }) => {
 
-const InputFieldsStyle = {
-    borderWidth: 0,
-    flex: 1,
-};
+    const [data, setData] = useState([]);
 
-const SearchBarCustom = (props) => {
-    const [value, setValue] = useState('');
-    return <SearchBar value={value} onChangeText={setValue} {...props} />;
-};
+    useEffect(() => {
+        BuscarCursos()
+    }, [])
 
+    async function BuscarCursos() {
+        try {
+            const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
+            console.log("Verificando string de listas", listaPesquisas)
+            if (listaPesquisas) {
+                const list = listaPesquisas.split(",")
+                console.log("lista com pesquisas", list)
 
+                const url = 'http://192.168.1.103:3000/curso/tema';
 
+                console.log(url);
 
+                await axios.get(url, {
+                    headers: {
+                        temas: listaPesquisas
+                    }
+                }).then((response) => {
+                    console.log("Lista com os cursos", response.data.objeto[0])
+                    setData(response.data.objeto);
+                }).catch((err) => {
+                    console.log("Erro ao consultar url: " + url, err)
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        finally {
+            // setLoading(false);
+        }
 
-// export function ConfiguracoesTela({ navigation }) {
+    };
 
-//     const [isLoading, setLoading] = useState(true);
-//     const [data, setData] = useState([]);
+    async function CarregarCurso() {
+        try {
+            navigation.navigate('DetalhesCursoTela', { curso: item });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-//     useEffect(() => {
-//         teste();
-//     }, []);
-
-
-
-//     const teste = async () => {
-//         try {
-//             const resposta = await API.MakeRequest('https://reactnative.dev/movies.json', 'GET');
-//             console.log(resposta.description);
-//             setData(resposta.movies);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//         finally {
-//             setLoading(false);
-//         }
-//     }
-
-//     // return (
-//     //     <View style={styles.basico}>
-//     //         {isLoading ? <ActivityIndicator /> : (
-//     //             <FlatList style={styles.textosBasicos}
-//     //                 data={data}
-//     //                 keyExtractor={({ id }, index) => id}
-//     //                 renderItem={({ item }) => (
-//     //                     <Text onPress={() => navigation.navigate('Pesquisa')} style={styles.textosBasicos}> Filme: {item.title} Ano: {item.releaseYear}</Text>
-//     //                 )}
-//     //             />
-//     //         )}
-//     //         <Text style={styles.textosBasicos}>A outra página, clique no grid para voltar ao inicio </Text>
-//     //     </View>
-//     // );
-// }
-
-const Tab = createBottomTabNavigator();
-
-export default function RecomendadosTela({navigation}) {
     return (
-
-        <View style={styles.basico}>
-            <Button
-                title="Recomendados"
-                onPress={() => navigation.navigate('PesquisaInicial')}
-            />
-
-        </View>
-        // <Tab.Navigator initialRouteName="Configuracoes" screenOptions={({ route }) => ({
-        //     tabBarIcon: ({ focused, color, size }) => {
-        //         let iconName;
-
-        //         if (route.name === 'Recomendados') {
-        //             iconName = focused ? 'md-star' : 'md-star-outline';
-        //         } else if (route.name === 'Configuracoes') {
-        //             iconName = focused ? 'settings' : 'settings-outline';
-        //         } else if (route.name === 'Favoritos') {
-        //             iconName = focused ? 'heart' : 'heart-outline';
-        //         }
-
-        //         return <Ionicons name={iconName} size={size} color={color} />;
-        //     },
-        //     tabBarActiveTintColor: '#000',
-        //     tabBarInactiveTintColor: '#000',
-        // })}
-        // >
-        //     {/* <Tab.Screen name="Recomendados" component={PesquisaTela} /> */}
-        //     <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-        //     {/* <Tab.Screen name="Favoritos" component={FavoritosTela} /> */}
-        // </Tab.Navigator>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <Text style={styles.textosBasicos}>recomendados</Text>
+                <ScrollView>
+                    <View>
+                        {data.length > 0 ? data.map((item, index) => (
+                            <View key={index}>
+                                <Card
+                                    nome={item.Nome}
+                                    keywords={item.Keywords}
+                                    link={item.Link}
+                                    temaPrincipal={item.TemaPrincipal}
+                                    urlImagem={item.UrlImagem}
+                                    CarregarCurso={CarregarCurso}
+                                />
+                            </View>
+                        ))
+                            : <View>
+                                <Text style={styles.msgRecomendados}>Ainda </Text>
+                                <Text style={styles.msgRecomendados}>não </Text>
+                                <Text style={styles.msgRecomendados}>temos </Text>
+                                <Text style={styles.msgRecomendados}>nenhuma </Text>
+                                <Text style={styles.msgRecomendados}>recomendação </Text>
+                                <Text style={styles.msgRecomendados}>para </Text>
+                                <Text style={styles.msgRecomendados}>você</Text>
+                                <Text style={styles.msgRecomendados}>:c</Text>
+                            </View>}
+                    </View>
+                </ScrollView>
+            </View>
+        </SafeAreaView>
     );
 }
 
+export default RecomendadosTela

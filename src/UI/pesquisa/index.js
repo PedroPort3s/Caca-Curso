@@ -199,6 +199,7 @@ import {
 } from 'react-native';
 import { color } from 'react-native-elements/dist/helpers';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const SCREEN_WIDTH = Dimensions.get('window').width;
 const dummySearchBarProps = {
@@ -218,6 +219,7 @@ const SearchBarCustom = (props) => {
     const [value, setValue] = useState('');
     return <SearchBar value={value} onChangeText={setValue} {...props} />;
 };
+
 
 
 const PesquisaInicial = ({ navigation }) => {
@@ -242,6 +244,16 @@ const PesquisaInicial = ({ navigation }) => {
     const [data, setData] = useState([]);
     const [palavraChave, setPalavraChave] = useState('');
 
+    const salvarAsyncStorage = async (lista) => {
+        AsyncStorage.setItem('CursosPesquisados', lista.toString())
+            .then(() => {
+                console.log("salvou tema pesquisado com sucesso")
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     async function BuscarCursos() {
         try {
             const url = 'http://192.168.1.103:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
@@ -257,6 +269,19 @@ const PesquisaInicial = ({ navigation }) => {
             // const resposta = await API.MakeRequest('http://localhost:3000/curso?p=java', 'GET');
             // console.log(resposta);
             // setData(resposta.movies);
+
+            const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
+            console.log("Verificando string de listas", listaPesquisas)
+            const list = listaPesquisas ? listaPesquisas.split(",") : []
+            console.log("lista com pesquisas", list)
+            if (!listaPesquisas) {
+                console.log("salvando lista inicial")
+                salvarAsyncStorage(list)
+            } else if (!list.find(item => item === palavraChave)) {
+                console.log("adicionando novo tema")
+                salvarAsyncStorage([...list, palavraChave])
+            }
+
         } catch (error) {
             console.log(error);
         }
@@ -333,14 +358,14 @@ const PesquisaInicial = ({ navigation }) => {
 
             <ScrollView style={styles.container}>
 
-                {data.map((item) => (
-                    <View key={item.link}>
+                {data.map((item, index) => (
+                    <View key={index}>
                         <Card
-                            nome={item.nome}
-                            keywords={item.keywords}
-                            link={item.link}
-                            temaPrincipal={item.temaPrincipal}
-                            urlImagem={item.urlImagem}
+                            nome={item.Nome}
+                            keywords={item.Keywords}
+                            link={item.Link}
+                            temaPrincipal={item.TemaPrincipal}
+                            urlImagem={item.UrlImagem}
                             CarregarCurso={CarregarCurso}
                         />
                     </View>
