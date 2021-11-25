@@ -366,7 +366,9 @@ const PesquisaInicial = ({ navigation }) => {
                             link={item.Link}
                             temaPrincipal={item.TemaPrincipal}
                             urlImagem={item.UrlImagem}
-                            CarregarCurso={CarregarCurso}
+                            CarregarCurso={() => {
+                                navigation.navigate("Detalhes", { curso: item })
+                            }}
                         />
                     </View>
                 ))}

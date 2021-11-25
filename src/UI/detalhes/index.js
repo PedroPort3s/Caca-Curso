@@ -69,14 +69,16 @@ const Detalhes = (props) => {
     let newCurso = props.route.params.curso
 
     useEffect(() => {
-        newCurso = {
-            Nome: props.route.params.curso.nome,
-            Link: props.route.params.curso.link,
-            TemaPrincipal: props.route.params.curso.temaPrincipal,
-            UrlImagem: props.route.params.curso.urlImagem,
-            Keywords: props.route.params.curso.keywords
-        }
-        verificaCurso(props.route.params.curso.link);
+        // newCurso = {
+        //     Nome: props.route.params.curso.nome,
+        //     Link: props.route.params.curso.link,
+        //     TemaPrincipal: props.route.params.curso.temaPrincipal,
+        //     UrlImagem: props.route.params.curso.urlImagem,
+        //     Keywords: props.route.params.curso.keywords
+        // }
+
+        console.log("Curso que chegou na detalhes: ", newCurso)
+        verificaCurso(newCurso.Link);
     }, []);
 
     const [curso, setCurso] = useState(newCurso)
@@ -91,7 +93,7 @@ const Detalhes = (props) => {
             console.log(url);
 
             await axios.get(url, {
-                headers: {
+                params: {
                     link: curso_link
                 }
             }).then((response) => {
@@ -117,7 +119,9 @@ const Detalhes = (props) => {
 
         console.log("curso que será criado: ", curso)
 
-        axios.post(url, { curso }).then((response) => {
+        axios.post(url, {
+            curso: curso
+        }).then((response) => {
             console.log('objeto do create: ', response.data.objeto);
             setCurso(response.data.objeto);
         }).catch((err) => {

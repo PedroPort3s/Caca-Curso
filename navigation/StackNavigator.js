@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Login from "../src/UI/login";
 import PesquisaInicial from "../src/UI/pesquisa";
+import Detalhes from "../src/UI/detalhes";
 import Configuracoes from "../src/UI/configuracoes";
 import RecomendadosTela from "../src/UI/recomendados";
 import FavoritosTela from "../src/UI/favoritos";
@@ -24,6 +25,7 @@ const MainStackNavigator = () => {
     <Stack.Navigator screenOptions={screenOptionStyle} initialRouteName="Login">
       <Stack.Screen name="LoginTela" component={Login} />
       <Stack.Screen name="PesquisaInicial" component={PesquisaInicial} />
+      <Stack.Screen name="Detalhes" component={Detalhes} />
       <Stack.Screen name="ConfiguracoesTela" component={Configuracoes} />
       <Stack.Screen name="RecomendadosTela" component={RecomendadosTela} />
       <Stack.Screen name="FavoritosTela" component={FavoritosTela} />
