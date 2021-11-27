@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios';
 
@@ -68,22 +68,18 @@ const Detalhes = (props) => {
 
     let newCurso = props.route.params.curso
 
-    useEffect(() => {
-        // newCurso = {
-        //     Nome: props.route.params.curso.nome,
-        //     Link: props.route.params.curso.link,
-        //     TemaPrincipal: props.route.params.curso.temaPrincipal,
-        //     UrlImagem: props.route.params.curso.urlImagem,
-        //     Keywords: props.route.params.curso.keywords
-        // }
+    onScreenLoad = async () => {
+        console.log("Caiu na função de load da página de configurações");
+        try {
+            validarBotoes();
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-        console.log("Curso que chegou na detalhes: ", newCurso)
-        verificaCurso(newCurso.Link);
-    }, []);
+    const [curso, setCurso] = useState(newCurso);
 
-    const [curso, setCurso] = useState(newCurso)
-
-    console.log("Curso: ", curso)
+    console.log("Curso: ", curso);
 
     const verificaCurso = async (curso_link) => {
         console.log("link do curso: ", curso_link);
@@ -129,6 +125,11 @@ const Detalhes = (props) => {
         });
     }
 
+    useEffect(() => {
+        console.log("Curso que chegou na detalhes: ", newCurso)
+        verificaCurso(newCurso.Link);
+    }, []);
+
     return (
         <SafeAreaView>
             <ScrollView
@@ -136,7 +137,8 @@ const Detalhes = (props) => {
                     flexGrow: 1,
                     flexDirection: 'column',
                     justifyContent: 'space-between'
-                }}>
+                }}
+            >
                 <View style={styles.container}>
                     <Text style={{ ...styles.box, ...styles.title }} >
                         {curso.Nome}

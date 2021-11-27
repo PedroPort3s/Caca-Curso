@@ -165,6 +165,7 @@ export default function ConfiguracoesTela({ navigation }) {
             console.log(error);
         }
     }
+    
     useEffect(() => {
         onScreenLoad();
     }, []);

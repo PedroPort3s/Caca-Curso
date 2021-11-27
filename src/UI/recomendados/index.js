@@ -3,6 +3,7 @@ import styles from './style.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
+    RefreshControl,
     ScrollView,
     Text,
     View,
@@ -10,14 +11,15 @@ import {
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Card from '../components/card';
+import { useIsFocused } from '@react-navigation/core';
 
 const RecomendadosTela = ({ navigation }) => {
 
     const [data, setData] = useState([]);
 
-    useEffect(() => {
-        BuscarCursos()
-    }, [])
+    // useEffect(() => {
+    //     BuscarCursos()
+    // }, [])
 
     async function BuscarCursos() {
         try {
@@ -37,6 +39,7 @@ const RecomendadosTela = ({ navigation }) => {
                     }
                 }).then((response) => {
                     console.log("Lista com os cursos", response.data.objeto[0])
+                    setData([]);
                     setData(response.data.objeto);
                 }).catch((err) => {
                     console.log("Erro ao consultar url: " + url, err)
@@ -58,6 +61,28 @@ const RecomendadosTela = ({ navigation }) => {
             console.log(error);
         }
     };
+
+    // const [refreshing, setRefreshing] = React.useState(false);
+    // const [value, forceUpdate] = useState(0);
+
+    // const wait = (timeout) => {
+    //     return new Promise(resolve => setTimeout(resolve, timeout));
+    // }
+
+    // const onRefresh = React.useCallback(() => {
+    //     setRefreshing(true);
+    //     wait(2000).then(() => {
+    //         BuscarCursos()
+    //         forceUpdate(value + 1)
+    //         setRefreshing(false)
+    //     });
+    // }, []);
+
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        BuscarCursos()
+    }, [isFocused])
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
