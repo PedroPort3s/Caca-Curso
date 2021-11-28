@@ -104,7 +104,7 @@ const Detalhes = (props) => {
     const verificaCurso = async (curso_link) => {
         console.log("link do curso: ", curso_link);
         try {
-            const url = 'http://192.168.1.103:3000/curso/link?link=' + curso_link;
+            const url = 'http://192.168.15.47:3000/curso/link?link=' + curso_link;
 
             console.log(url);
 
@@ -113,6 +113,8 @@ const Detalhes = (props) => {
                 if (response.data.objeto) {
                     setLike(response.data.objeto.Like)
                     setDislike(response.data.objeto.Dislike)
+                    console.log("novo curso: ", response.data.objeto)
+                    newCurso = response.data.objeto
                 } else {
                     createNewCurso()
                 }
@@ -128,7 +130,7 @@ const Detalhes = (props) => {
     };
 
     const createNewCurso = () => {
-        const url = 'http://192.168.1.103:3000/curso';
+        const url = 'http://192.168.15.47:3000/curso';
 
         console.log("curso que será criado: ", newCurso)
 
@@ -136,6 +138,7 @@ const Detalhes = (props) => {
             curso: newCurso
         }).then((response) => {
             console.log('objeto do create: ', response.data.objeto);
+            newCurso = response.data.objeto
         }).catch((err) => {
             console.log("Erro ao consultar url: " + url, err)
         });
@@ -147,13 +150,12 @@ const Detalhes = (props) => {
         console.log("Usuario logado: ", usuarioLogadoObj)
         setUsuarioLogado(usuarioLogadoObj.json)
         if (usuarioLogadoObj) {
-            const url = "http://192.168.1.103:3000/avaliacaogeral/cursousuario?curso_id=" + newCurso.id + "&usuario_id=" + usuarioLogadoObj.json.usuarioIdBanco;
+            const url = "http://192.168.15.47:3000/avaliacaogeral/cursousuario?curso_id=" + newCurso.id + "&usuario_id=" + usuarioLogadoObj.json.usuarioIdBanco;
 
             console.log("Usuario sendo verificado: ", usuarioLogadoObj.json)
 
             axios.get(url).then((response) => {
                 console.log('Avalicao retornada: ', response.data.objeto);
-                console.log(response.data.objeto)
                 setAvaliacaoGeral(response.data.objeto)
             }).catch((err) => {
                 console.log("Erro ao procurar: ", err)
@@ -171,7 +173,7 @@ const Detalhes = (props) => {
     ///////quando da um like, ela altera a variavel para um array de numero, o que força ela a criar novamente, pensar antes de fazer a logica amanha
 
     const darAvaliacao = (like_dislike) => {
-        let url = "http://192.168.1.103:3000/avaliacaogeral"
+        let url = "http://192.168.15.47:3000/avaliacaogeral"
         console.log("Avaliação geral salva", avaliacaoGeral)
         if (avaliacaoGeral && avaliacaoGeral.id) {
             console.log("Url completa", url)
@@ -195,6 +197,7 @@ const Detalhes = (props) => {
         } else {
             console.log("Url completa", url)
             console.log("Usuario logado no create", usuarioLogado)
+            console.log("Novo curso sendo criado", newCurso)
             axios.post(url,
                 {
                     Curso_id: newCurso.id,
@@ -228,7 +231,7 @@ const Detalhes = (props) => {
     }
 
     const verificaLikes = async () => {
-        let url = "http://192.168.1.103:3000/avaliacaogeral/getlikes?curso_id=" + newCurso.id
+        let url = "http://192.168.15.47:3000/avaliacaogeral/getlikes?curso_id=" + newCurso.id
 
         console.log("Verificando Likes e dislikes: ", like, " e ", dislike)
 

@@ -12,6 +12,9 @@ import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Card from '../components/card';
 import { useIsFocused } from '@react-navigation/core';
+import {
+    Button
+} from 'react-native-elements';
 
 const RecomendadosTela = ({ navigation }) => {
 

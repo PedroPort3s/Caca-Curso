@@ -56,12 +56,14 @@ const SearchBarCustom = (props) => {
 
 const PesquisaInicial = ({ navigation }) => {
 
-    const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [palavraChave, setPalavraChave] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const salvarAsyncStorage = async (lista) => {
-        AsyncStorage.setItem('CursosPesquisados', lista.toString())
+        // await AsyncStorage.removeItem("CursosPesquisados")
+        console.log("Lista de nomes", lista.toString())
+        await AsyncStorage.setItem('CursosPesquisados', lista.toString())
             .then(() => {
                 console.log("salvou tema pesquisado com sucesso")
             })
@@ -72,6 +74,7 @@ const PesquisaInicial = ({ navigation }) => {
 
     async function BuscarCursos() {
         try {
+            setLoading(true);
             const url = 'http://192.168.15.47:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
 
             console.log(url);
@@ -82,20 +85,18 @@ const PesquisaInicial = ({ navigation }) => {
                 setData(response.data.objeto);
             });
 
-            // const resposta = await API.MakeRequest('http://localhost:3000/curso?p=java', 'GET');
-            // console.log(resposta);
-            // setData(resposta.movies);
-
             const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
             console.log("Verificando string de listas", listaPesquisas)
-            const list = listaPesquisas ? listaPesquisas.split(",") : []
+            const list = listaPesquisas ? listaPesquisas.split(",") : [palavraChave]
             console.log("lista com pesquisas", list)
             if (!listaPesquisas) {
-                console.log("salvando lista inicial")
+                console.log("salvando lista inicial", list)
                 salvarAsyncStorage(list)
+                setLoading(false);
             } else if (!list.find(item => item === palavraChave)) {
                 console.log("adicionando novo tema")
                 salvarAsyncStorage([...list, palavraChave])
+                setLoading(false);
             }
 
         } catch (error) {
@@ -104,7 +105,6 @@ const PesquisaInicial = ({ navigation }) => {
         finally {
             setLoading(false);
         }
-
     };
 
     async function CarregarCurso() {
@@ -115,129 +115,75 @@ const PesquisaInicial = ({ navigation }) => {
         }
     };
 
-    return (
-
-
-        <View style={styles.basico}>
-            {/* <Text style={styles.textosBasicos}>Inicio</Text> */}
-            {/* <SearchBarCustom
-                placeholder="Pesquisa de Cursos"
-                platform="android"
-                style={InputFieldsStyle}
-                {...dummySearchBarProps}
-                {...{ marginTop: 80 }}
-            /> */}
-            <TextInput
-                placeholder="Buscar Cursos"
-                placeholderTextColor="#fff"
-                style={{ top: 40, paddingTop: 40 }}
-                onChangeText={setPalavraChave}
-                value={palavraChave}
+    if (loading) {
+        return (
+        <View style={styles.basicoLoading}>  
+            <ActivityIndicator 
+                size="large"
+                color="green"
             />
-
-
-            <Button
-                title="Buscar"
-                icon={{
-                    name: 'search',
-                    type: 'font-awesome',
-                    size: 15,
-                    color: 'white',
-                }}
-                iconContainerStyle={{ marginRight: 10 }}
-                titleStyle={{ fontWeight: '700' }}
-                buttonStyle={{
-                    backgroundColor: 'rgba(90, 154, 230, 1)',
-                    borderColor: 'transparent',
-                    borderWidth: 0,
-                    borderRadius: 30,
-                    marginTop: 50
-                }}
-                containerStyle={{
-                    width: 200,
-                    marginHorizontal: 50,
-                    marginVertical: 10,
-                }}
-                onPress={BuscarCursos}
-                style={{ color: 'white', top: 70, paddingTop: 20 }}
-            />
-
-            {/* {isLoading ? <ActivityIndicator /> : (
-                <FlatList style={{ color: 'white', top: 50 }}
-                    data={data}
-                    keyExtractor={item => item.link}
-                    renderItem={({ item }) => (
-                        <Text style={styles.textosBasicos}> Curso: {item.nome} Link: {item.link}</Text>
-                    )}
-                />
-            )} */}
-
-            <ScrollView style={styles.container}>
-
-                {data.map((item, index) => (
-                    <View key={index}>
-                        <Card
-                            nome={item.Nome}
-                            keywords={item.Keywords}
-                            link={item.Link}
-                            temaPrincipal={item.TemaPrincipal}
-                            urlImagem={item.UrlImagem}
-                            CarregarCurso={() => {
-                                navigation.navigate("Detalhes", { curso: item })
-                            }}
-                        />
-                    </View>
-                ))}
-            </ScrollView>
-
-            {/* <Tab.Navigator initialRouteName="Pesquisas" screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-
-                    if (route.name === 'Recomendados') {
-                        iconName = focused ? 'md-star' : 'md-star-outline';
-                    } else if (route.name === 'Configuracoes') {
-                        iconName = focused ? 'settings' : 'settings-outline';
-                    } else if (route.name === 'Favoritos') {
-                        iconName = focused ? 'heart' : 'heart-outline';
-                    }
-
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: '#000',
-                tabBarInactiveTintColor: '#000',
-            })}
-            >
-                <Tab.Screen name="Configuracoes" component={ConfiguracoesTela} />
-            </Tab.Navigator> */}
+            <Text style={styles.textoLoading}>Aguarde a consulta dos cursos em nossa API</Text>
         </View>
-        /*       <View style={styles.basico}>
-                   <Text style={styles.textosBasicos} onPress={() => navigation.navigate('ConfiguracoesTela')}>A outra página, clique no grid para voltar ao inicio </Text>
-       
-                   
-       {
-                   <Tab.Navigator initialRouteName="Pesquisas" screenOptions={({ route }) => ({
-                       tabBarIcon: ({ focused, color, size }) => {
-                           let iconName;
-       
-                           if (route.name === 'Recomendados') {
-                               iconName = focused ? 'md-star' : 'md-star-outline';
-                           } else if (route.name === 'Configuracoes') {
-                               iconName = focused ? 'settings' : 'settings-outline';
-                           } else if (route.name === 'Favoritos') {
-                               iconName = focused ? 'heart' : 'heart-outline';
-                           }
-       
-                           return <Ionicons name={iconName} size={size} color={color} />;
-                       },
-                       tabBarActiveTintColor: '#000',
-                       tabBarInactiveTintColor: '#000',
-                   })}
-                   >
-                       <Tab.Screen name="Configuracoes" component={ConfiguracoesTela2} onPress={() => navigation.navigate('ConfiguracoesTela')} />
-                   </Tab.Navigator> }
-               </View>*/
-    );
+        );
+    }
+    else {
+        return (
+            <View style={styles.basico}>
+                <TextInput
+                    placeholder="Buscar Cursos"
+                    placeholderTextColor="#fff"
+                    color="#fff"
+                    style={{ top: 40, paddingTop: 40 }}
+                    onChangeText={setPalavraChave}
+                    value={palavraChave}
+                />
+
+                <Button
+                    title="Buscar"
+                    icon={{
+                        name: 'search',
+                        type: 'font-awesome',
+                        size: 15,
+                        color: 'white',
+                    }}
+                    iconContainerStyle={{ marginRight: 10 }}
+                    titleStyle={{ fontWeight: '700' }}
+                    buttonStyle={{
+                        backgroundColor: 'rgba(90, 154, 230, 1)',
+                        borderColor: 'transparent',
+                        borderWidth: 0,
+                        borderRadius: 30,
+                        marginTop: 50
+                    }}
+                    containerStyle={{
+                        width: 200,
+                        marginHorizontal: 50,
+                        marginVertical: 10,
+                    }}
+                    onPress={BuscarCursos}
+                    style={{ color: 'white', top: 70, paddingTop: 20 }}
+                />
+
+                <ScrollView style={styles.container}>
+
+                    {data.map((item, index) => (
+                        <View key={index}>
+                            <Card
+                                nome={item.Nome}
+                                keywords={item.Keywords}
+                                link={item.Link}
+                                temaPrincipal={item.TemaPrincipal}
+                                urlImagem={item.UrlImagem}
+                                CarregarCurso={() => {
+                                    navigation.navigate("Detalhes", { curso: item })
+                                }}
+                            />
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        );
+    }
 }
 
 export default PesquisaInicial;
