@@ -117,8 +117,8 @@ const RecomendadosTela = ({ navigation }) => {
     }
     else {
         return (
-            <SafeAreaView style={styles.basico}>
-                <View style={styles.basico}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     <Button
                         title="Para utilizar este recurso, é necessário estar logado"
                         onPress={() => navigation.navigate('LoginTela')}

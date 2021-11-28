@@ -57,68 +57,100 @@ export default function ConfiguracoesTela({ navigation }) {
         onScreenLoad()
     }, [isFocused])
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.scrollView}
-            >
-                {usuarioLogado && (
-                    <View style={styles.containerInvisivel}>
-                        <Button
-                            text="Favoritos"
-                            buttonCustomStyles={{
-                                backgroundColor: 'yellow',
-                                borderRadius: 50,
-                                marginTop: 10
-                            }}
-                            onClick={() => { alert("Favoritos!") }}
-                        />
 
-                        <Button
-                            text="Recomendados"
-                            buttonCustomStyles={{
-                                backgroundColor: 'yellow',
-                                borderRadius: 50,
-                                marginTop: 10
-                            }}
-                            onClick={() => { alert("Recomendados!") }}
-                        />
+    if (usuarioLogado) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollView}
+                >
+                    
+                        <View style={styles.containerInvisivel}>
+                            <Button
+                                text="Favoritos"
+                                buttonCustomStyles={{
+                                    backgroundColor: 'yellow',
+                                    borderRadius: 50,
+                                    marginTop: 10
+                                }}
+                                onClick={() => { alert("Favoritos!") }}
+                            />
 
-                        <Button
-                            text="Perfil"
-                            buttonCustomStyles={{
-                                backgroundColor: 'yellow',
-                                borderRadius: 50,
-                                marginTop: 10
-                            }}
-                            onClick={() => navigation.navigate('UsuarioTela')}
-                        />
-                    </View>
-                )}
+                            <Button
+                                text="Recomendados"
+                                buttonCustomStyles={{
+                                    backgroundColor: 'yellow',
+                                    borderRadius: 50,
+                                    marginTop: 10
+                                }}
+                                onClick={() => { alert("Recomendados!") }}
+                            />
 
-                <Button
-                    text="Login"
-                    buttonCustomStyles={{
-                        backgroundColor: "#6495ED",
-                        borderRadius: 50,
-                        marginTop: 10
-                    }}
-                    onClick={() => navigation.navigate('LoginTela')}
-                />
+                            <Button
+                                text="Perfil"
+                                buttonCustomStyles={{
+                                    backgroundColor: 'yellow',
+                                    borderRadius: 50,
+                                    marginTop: 10
+                                }}
+                                onClick={() => navigation.navigate('UsuarioTela')}
+                            />
+                        </View>
+                    
 
+                    <Button
+                        text="Login"
+                        buttonCustomStyles={{
+                            backgroundColor: "#6495ED",
+                            borderRadius: 50,
+                            marginTop: 10
+                        }}
+                        onClick={() => navigation.navigate('LoginTela')}
+                    />
 
-                <Button
-                    text="Sair"
-                    buttonCustomStyles={{
-                        backgroundColor: 'red',
-                        borderRadius: 50,
-                        marginTop: 10
-                    }}
-                    onClick={removerUsuarioCache}
-                />
-            </ScrollView>
-        </SafeAreaView>
-    );
+                    <Button
+                        text="Sair"
+                        buttonCustomStyles={{
+                            backgroundColor: 'red',
+                            borderRadius: 50,
+                            marginTop: 10
+                        }}
+                        onClick={removerUsuarioCache}
+                    />
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+    else {
+        return (
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollView}
+                >
+                    <Button
+                        text="Login"
+                        buttonCustomStyles={{
+                            backgroundColor: "#6495ED",
+                            borderRadius: 50,
+                            marginTop: 10
+                        }}
+                        onClick={() => navigation.navigate('LoginTela')}
+                    />
+
+                    <Button
+                        text="Sair"
+                        buttonCustomStyles={{
+                            backgroundColor: 'red',
+                            borderRadius: 50,
+                            marginTop: 10
+                        }}
+                        onClick={removerUsuarioCache}
+                    />
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
 }
 
 const styles = StyleSheet.create({
