@@ -22,7 +22,6 @@ const Login = ({ navigation }) => {
     usuarioJson = JSON.parse(usuarioJson)
     console.log("Usuario transformado", usuarioJson.json)
 
-    usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
     const newUsuario = await axios.post('http://192.168.15.47:3000/usuario',
 
       {
@@ -40,8 +39,8 @@ const Login = ({ navigation }) => {
       }
     )
 
-    usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
     console.log("Usuario banco", newUsuario.data)
+    usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
 
     persistLogin(usuarioJson)
   };
@@ -61,7 +60,23 @@ const Login = ({ navigation }) => {
 
         if (type == 'success') {
           const { email, name, photoUrl, id } = user;
-          persistLogin({ email, name, photoUrl, id }, 'Login com Google bem sucedido', 'SUCCESS');
+          // const dadosUsuario = {
+          //   json: {
+          //     email,
+          //     name,
+          //     picture: photoUrl,
+          //     id
+          //   }
+          // };
+
+          persistLogin({
+            json: {
+              email,
+              name,
+              picture: photoUrl,
+              id
+            }
+          }, 'Login com Google bem sucedido', 'SUCCESS');
 
           AsyncStorage.getItem('CacaCursoCredentials').then((res) => console.log("Login com Google bem sucedido: " + res));
 
@@ -172,7 +187,7 @@ const Login = ({ navigation }) => {
           let usuarioJson = await AsyncStorage.getItem('CacaCursoCredentials')
 
           usuarioJson = JSON.parse(usuarioJson)
-          console.log("Usuario transformado", usuarioJson.json)
+          console.log("Usuario transformado", usuarioJson)
           console.log("Usuario vindo do banco", response.data)
 
           usuarioJson.json["usuarioIdBanco"] = response.data.id

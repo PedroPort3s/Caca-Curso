@@ -224,22 +224,6 @@ const SearchBarCustom = (props) => {
 
 const PesquisaInicial = ({ navigation }) => {
 
-    // onScreenLoad = async () => {
-    //     console.log("Caiu na função de load da página");
-    //     try {
-    //         const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
-    //         console.log("USUARIO NO LOGIN " + usuarioCache);
-    //         if (usuarioCache !== null) {
-    //             CodePush.restartApp();
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-    // useEffect(() => {
-    //     onScreenLoad();
-    // }, []);
-
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [palavraChave, setPalavraChave] = useState('');

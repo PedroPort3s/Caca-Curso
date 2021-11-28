@@ -64,7 +64,7 @@ const UsuarioTela = ({ navigation }) => {
                 let parsed = JSON.parse(usuarioCache);
                 
                 //Facebook setagem
-                if(parsed.json !== undefined){
+                if(parsed.json.picture.data !== undefined){
                     //facebook - padrão de store do facebook
                     console.log("Caiu no facebook");
                     setarUsuario(parsed.json.name, parsed.json.email, parsed.json.picture.data.url);
@@ -72,17 +72,8 @@ const UsuarioTela = ({ navigation }) => {
                 else{
                     //google - padrão de store do google
                     console.log("Caiu no google");
-                    setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
+                    setarUsuario(parsed.json.name, parsed.json.email, parsed.json.picture);
                 }
-
-
-                // console.log("Parsed teste " + parsed.name);
-                // console.log("Parsed teste 2 " + parsed.email);
-                // console.log("Parsed teste 3 " + parsed.photoUrl);
-                
-                //setarUsuario(parsed.name, parsed.email, parsed.photoUrl);
-                // setNomeUsuario(parsed.name);
-                // console.log(" Usuario setado : " + nomeUsuario);
             }
             else {
 
