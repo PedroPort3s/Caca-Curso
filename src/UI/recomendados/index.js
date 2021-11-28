@@ -13,9 +13,23 @@ import Card from '../components/card';
 
 const RecomendadosTela = ({ navigation }) => {
 
+    const [usuarioLogado, setUsuarioLogado] = useState();
+
     const [data, setData] = useState([]);
 
+    async function validarBotoes() {
+        const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+        if (usuarioCache !== null) {
+            console.log('Validou os botões na recomendados')
+            setUsuarioLogado(true);
+        }
+        else {
+            setUsuarioLogado(false);
+        }
+    }
+
     useEffect(() => {
+        validarBotoes()
         BuscarCursos()
     }, [])
 
@@ -60,36 +74,38 @@ const RecomendadosTela = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <Text style={styles.textosBasicos}>recomendados</Text>
-                <ScrollView>
-                    <View>
-                        {data.length > 0 ? data.map((item, index) => (
-                            <View key={index}>
-                                <Card
-                                    nome={item.Nome}
-                                    keywords={item.Keywords}
-                                    link={item.Link}
-                                    temaPrincipal={item.TemaPrincipal}
-                                    urlImagem={item.UrlImagem}
-                                    CarregarCurso={CarregarCurso}
-                                />
-                            </View>
-                        ))
-                            : <View>
-                                <Text style={styles.msgRecomendados}>Ainda </Text>
-                                <Text style={styles.msgRecomendados}>não </Text>
-                                <Text style={styles.msgRecomendados}>temos </Text>
-                                <Text style={styles.msgRecomendados}>nenhuma </Text>
-                                <Text style={styles.msgRecomendados}>recomendação </Text>
-                                <Text style={styles.msgRecomendados}>para </Text>
-                                <Text style={styles.msgRecomendados}>você</Text>
-                                <Text style={styles.msgRecomendados}>:c</Text>
-                            </View>}
-                    </View>
-                </ScrollView>
-            </View>
+        <SafeAreaView style={styles.basico}>
+            {usuarioLogado && (
+                <View style={styles.container}>
+                    <Text style={styles.textosBasicos}>recomendados</Text>
+                    <ScrollView>
+                        <View>
+                            {data.length > 0 ? data.map((item, index) => (
+                                <View key={index}>
+                                    <Card
+                                        nome={item.Nome}
+                                        keywords={item.Keywords}
+                                        link={item.Link}
+                                        temaPrincipal={item.TemaPrincipal}
+                                        urlImagem={item.UrlImagem}
+                                        CarregarCurso={CarregarCurso}
+                                    />
+                                </View>
+                            ))
+                                : <View>
+                                    <Text style={styles.msgRecomendados}>Ainda </Text>
+                                    <Text style={styles.msgRecomendados}>não </Text>
+                                    <Text style={styles.msgRecomendados}>temos </Text>
+                                    <Text style={styles.msgRecomendados}>nenhuma </Text>
+                                    <Text style={styles.msgRecomendados}>recomendação </Text>
+                                    <Text style={styles.msgRecomendados}>para </Text>
+                                    <Text style={styles.msgRecomendados}>você</Text>
+                                    <Text style={styles.msgRecomendados}>:c</Text>
+                                </View>}
+                        </View>
+                    </ScrollView>
+                </View>
+            )}            
         </SafeAreaView>
     );
 }
