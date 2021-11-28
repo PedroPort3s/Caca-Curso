@@ -7,6 +7,12 @@ export default StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#333333',
   },
+  basicoLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#333333',
+  },
   textosBasicos: {
     color: 'white',
     fontSize: 25,

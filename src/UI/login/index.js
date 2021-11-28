@@ -7,6 +7,7 @@ import * as Facebook from 'expo-facebook';
 import { CredentialsContext } from '../../helpers/CredentialsContext';
 import { SocialIcon } from 'react-native-elements'
 import axios from 'axios';
+import { useIsFocused } from '@react-navigation/core';
 
 const Login = ({ navigation }) => {
 
@@ -232,9 +233,22 @@ const Login = ({ navigation }) => {
       console.log(error);
     }
   }
+  
+  const isFocused = useIsFocused()
+  
   useEffect(() => {
     onScreenLoad();
-  }, []);
+    validarUsuarioLogado()
+  }, [isFocused])
+
+
+  //função para validar login do SALAFRARIO
+  async function validarUsuarioLogado() {
+    const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+    if (usuarioCache !== null) {
+      navigation.navigate('PesquisaInicial');
+    }
+  }
 
   return (
     <View style={styles.basico}>

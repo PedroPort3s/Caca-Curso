@@ -12,6 +12,9 @@ import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Card from '../components/card';
 import { useIsFocused } from '@react-navigation/core';
+import {
+    Button
+} from 'react-native-elements';
 
 const RecomendadosTela = ({ navigation }) => {
 
@@ -60,43 +63,71 @@ const RecomendadosTela = ({ navigation }) => {
 
     useEffect(() => {
         BuscarCursos()
+        validarBotoes()
     }, [isFocused])
 
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <Text style={styles.textosBasicos}>recomendados</Text>
-                <ScrollView>
-                    <View>
-                        {data.length > 0 ? data.map((item, index) => (
-                            <View key={index}>
-                                <Card
-                                    nome={item.Nome}
-                                    keywords={item.Keywords}
-                                    link={item.Link}
-                                    temaPrincipal={item.TemaPrincipal}
-                                    urlImagem={item.UrlImagem}
-                                    CarregarCurso={() => {
-                                        navigation.navigate("Detalhes", { curso : item})
-                                    }}
-                                />
-                            </View>
-                        ))
-                            : <View>
-                                <Text style={styles.msgRecomendados}>Ainda </Text>
-                                <Text style={styles.msgRecomendados}>não </Text>
-                                <Text style={styles.msgRecomendados}>temos </Text>
-                                <Text style={styles.msgRecomendados}>nenhuma </Text>
-                                <Text style={styles.msgRecomendados}>recomendação </Text>
-                                <Text style={styles.msgRecomendados}>para </Text>
-                                <Text style={styles.msgRecomendados}>você</Text>
-                                <Text style={styles.msgRecomendados}>:c</Text>
-                            </View>}
-                    </View>
-                </ScrollView>
-            </View>
-        </SafeAreaView>
-    );
+
+    //função para validar login do SALAFRARIO
+    async function validarBotoes() {
+        const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+        if (usuarioCache !== null) {
+            console.log('Validou os botões na recomendados')
+            setUsuarioLogado(true);
+        }
+        else {
+            setUsuarioLogado(false);
+        }
+    }
+    if (usuarioLogado) {
+        return (
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.container}>
+                    <Text style={styles.textosBasicos}>recomendados</Text>
+                    <ScrollView>
+                        <View>
+                            {data.length > 0 ? data.map((item, index) => (
+                                <View key={index}>
+                                    <Card
+                                        nome={item.Nome}
+                                        keywords={item.Keywords}
+                                        link={item.Link}
+                                        temaPrincipal={item.TemaPrincipal}
+                                        urlImagem={item.UrlImagem}
+                                        CarregarCurso={() => {
+                                            navigation.navigate("Detalhes", { curso: item })
+                                        }}
+                                    />
+                                </View>
+                            ))
+                                : <View>
+                                    <Text style={styles.msgRecomendados}>Ainda </Text>
+                                    <Text style={styles.msgRecomendados}>não </Text>
+                                    <Text style={styles.msgRecomendados}>temos </Text>
+                                    <Text style={styles.msgRecomendados}>nenhuma </Text>
+                                    <Text style={styles.msgRecomendados}>recomendação </Text>
+                                    <Text style={styles.msgRecomendados}>para </Text>
+                                    <Text style={styles.msgRecomendados}>você</Text>
+                                    <Text style={styles.msgRecomendados}>:c</Text>
+                                </View>}
+                        </View>
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
+        );
+    }
+    else {
+        return (
+            <SafeAreaView style={styles.basico}>
+                <View style={styles.basico}>
+                    <Button
+                        title="Para utilizar este recurso, é necessário estar logado"
+                        onPress={() => navigation.navigate('LoginTela')}
+                    />
+
+                </View>
+            </SafeAreaView>
+        )
+    }
 }
 
 export default RecomendadosTela
