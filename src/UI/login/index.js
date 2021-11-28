@@ -22,7 +22,7 @@ const Login = ({ navigation }) => {
     usuarioJson = JSON.parse(usuarioJson)
     console.log("Usuario transformado", usuarioJson.json)
 
-    const newUsuario = await axios.post('http://192.168.15.47:3000/usuario',
+    const newUsuario = await axios.post('http://192.168.1.103:3000/usuario',
 
       {
         nome: nome,
@@ -170,7 +170,7 @@ const Login = ({ navigation }) => {
     console.log("Caiu no validar");
     console.log(email);
     try {
-      const url = 'http://192.168.15.47:3000/usuario/carregar/' + encodeURIComponent(email);
+      const url = 'http://192.168.1.103:3000/usuario/carregar/' + encodeURIComponent(email);
 
       await axios.get(url).then(async (response) => {
         // setData(response.data.objeto);

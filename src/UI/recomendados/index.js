@@ -27,7 +27,7 @@ const RecomendadosTela = ({ navigation }) => {
                 const list = listaPesquisas.split(",")
                 console.log("lista com pesquisas", list)
 
-                const url = 'http://192.168.15.47:3000/curso/tema?temas=' + listaPesquisas;
+                const url = 'http://192.168.1.103:3000/curso/tema?temas=' + listaPesquisas;
 
                 console.log(url);
 

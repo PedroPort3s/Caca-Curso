@@ -82,7 +82,7 @@ const FavoritosTela = ({ navigation }) => {
             <SafeAreaView style={styles.basico}>
                 <View style={styles.basico}>
                     <Button
-                        title="Login"
+                        title="Para utilizar este recurso, é necessário estar logado"
                         onPress={() => navigation.navigate('LoginTela')}
                     />
 

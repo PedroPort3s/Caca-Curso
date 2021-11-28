@@ -240,7 +240,7 @@ const PesquisaInicial = ({ navigation }) => {
 
     async function BuscarCursos() {
         try {
-            const url = 'http://192.168.15.47:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
+            const url = 'http://192.168.1.103:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
 
             console.log(url);
 
@@ -249,10 +249,6 @@ const PesquisaInicial = ({ navigation }) => {
             }).then((response) => {
                 setData(response.data.objeto);
             });
-
-            // const resposta = await API.MakeRequest('http://localhost:3000/curso?p=java', 'GET');
-            // console.log(resposta);
-            // setData(resposta.movies);
 
             const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
             console.log("Verificando string de listas", listaPesquisas)
