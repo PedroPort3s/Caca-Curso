@@ -9,6 +9,19 @@ import IconFontAwesome5 from '../src/UI/components/iconFontAwesome5'
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+
+  const getTabBarVisibility = (route) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : '';
+  
+    if (routeName === 'PesquisaInicial') {
+      return false;
+    }
+  
+    return true;
+  }
+
   return (
     <Tab.Navigator screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -16,22 +29,49 @@ const BottomTabNavigator = () => {
 
         if (route.name === 'Pesquisa') {
           if (focused) {
-            return <IconFontAwesome5 icon="search" size={size} style={{}} />;
+            return <IconAntDesign icon="search1" size={size} style={{}} />;
           } else {
             return <IconAntDesign icon="search1" size={size} style={{}} />;
           }
-        } else if (route.name === 'Favoritos') {
-          return <IconAntDesign icon="search1" size={size} style={{}} />;
         }
 
-        return <IconAntDesign icon="search1" size={size} style={{}} />;
+        else if (route.name === 'Favoritos') {
+          if (focused) {
+            return <IconAntDesign icon="star" size={size} style={{}} />;
+          }
+          else {
+            return <IconAntDesign icon="staro" size={size} style={{}} />;
+          }
+        }
+
+        else if (route.name === 'Configuracoes') {
+          if (focused) {
+            return <IconAntDesign icon="tool" size={size} style={{}} />;
+          }
+          else {
+            return <IconAntDesign icon="tool" size={size} style={{}} />;
+          }
+        }
+
+        else if (route.name === 'Recomendados') {
+          if (focused) {
+            return <IconAntDesign icon="heart" size={size} style={{}} />;
+          }
+          else {
+            return <IconAntDesign icon="hearto" size={size} style={{}} />;
+          }
+        }
       },
       headerShown: false,
       tabBarActiveTintColor: 'tomato',
       tabBarInactiveTintColor: 'gray',
     })}
     >
-      <Tab.Screen name="Pesquisa" component={MainStackNavigator} />
+      <Tab.Screen name="Pesquisa"
+        component={MainStackNavigator}
+        options={({ route }) => ({
+          tabBarVisible: getTabBarVisibility(route)
+        })} />
       <Tab.Screen name="Favoritos" component={FavoritoStackNavigator} />
       <Tab.Screen name="Configuracoes" component={ContactStackNavigator} />
       <Tab.Screen name="Recomendados" component={RecomendadoStackNavigator} />

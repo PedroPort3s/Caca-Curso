@@ -15,11 +15,9 @@ import { useIsFocused } from '@react-navigation/core';
 
 const RecomendadosTela = ({ navigation }) => {
 
-    const [data, setData] = useState([]);
+    const [usuarioLogado, setUsuarioLogado] = useState();
 
-    // useEffect(() => {
-    //     BuscarCursos()
-    // }, [])
+    const [data, setData] = useState([]);
 
     async function BuscarCursos() {
         try {
