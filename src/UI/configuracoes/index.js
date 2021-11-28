@@ -123,9 +123,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '../components/Button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions, NavigationActions } from 'react-navigation';
-
-
-
+import { useIsFocused } from '@react-navigation/core';
 
 export default function ConfiguracoesTela({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
@@ -165,7 +163,7 @@ export default function ConfiguracoesTela({ navigation }) {
             console.log(error);
         }
     }
-    
+
     useEffect(() => {
         onScreenLoad();
     }, []);
@@ -174,22 +172,16 @@ export default function ConfiguracoesTela({ navigation }) {
         return new Promise(resolve => setTimeout(resolve, timeout));
     }
 
+    const isFocused = useIsFocused()
 
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
-    }, []);
+    useEffect(() => {
+        onScreenLoad()
+    }, [isFocused])
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView
                 contentContainerStyle={styles.scrollView}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
             >
                 {usuarioLogado && (
                     <View style={styles.containerInvisivel}>

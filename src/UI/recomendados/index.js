@@ -29,15 +29,11 @@ const RecomendadosTela = ({ navigation }) => {
                 const list = listaPesquisas.split(",")
                 console.log("lista com pesquisas", list)
 
-                const url = 'http://192.168.1.103:3000/curso/tema';
+                const url = 'http://192.168.1.103:3000/curso/tema?temas=' + listaPesquisas;
 
                 console.log(url);
 
-                await axios.get(url, {
-                    headers: {
-                        temas: listaPesquisas
-                    }
-                }).then((response) => {
+                await axios.get(url).then((response) => {
                     console.log("Lista com os cursos", response.data.objeto[0])
                     setData([]);
                     setData(response.data.objeto);
@@ -62,22 +58,6 @@ const RecomendadosTela = ({ navigation }) => {
         }
     };
 
-    // const [refreshing, setRefreshing] = React.useState(false);
-    // const [value, forceUpdate] = useState(0);
-
-    // const wait = (timeout) => {
-    //     return new Promise(resolve => setTimeout(resolve, timeout));
-    // }
-
-    // const onRefresh = React.useCallback(() => {
-    //     setRefreshing(true);
-    //     wait(2000).then(() => {
-    //         BuscarCursos()
-    //         forceUpdate(value + 1)
-    //         setRefreshing(false)
-    //     });
-    // }, []);
-
     const isFocused = useIsFocused()
 
     useEffect(() => {
@@ -98,7 +78,9 @@ const RecomendadosTela = ({ navigation }) => {
                                     link={item.Link}
                                     temaPrincipal={item.TemaPrincipal}
                                     urlImagem={item.UrlImagem}
-                                    CarregarCurso={CarregarCurso}
+                                    CarregarCurso={() => {
+                                        navigation.navigate("Detalhes", { curso : item})
+                                    }}
                                 />
                             </View>
                         ))

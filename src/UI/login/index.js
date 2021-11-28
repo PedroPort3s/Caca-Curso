@@ -16,20 +16,32 @@ const Login = ({ navigation }) => {
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   async function gravarUsuario(nome, email, idThirdParty, imageUrl, provider) {
-    await fetch('http://192.168.15.47:3000/usuario', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+
+    let usuarioJson = await AsyncStorage.getItem('CacaCursoCredentials')
+
+    usuarioJson = JSON.parse(usuarioJson)
+    console.log("Usuario transformado", usuarioJson.json)
+
+    usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
+    const newUsuario = await axios.post('http://192.168.1.103:3000/usuario',
+      {
         nome: nome,
         email: email,
         idThirdParty: idThirdParty,
         imageUrl: imageUrl,
         provider: provider
-      })
-    });
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+      }
+    )
+
+    console.log("Usuario banco", newUsuario.data)
+
+    persistLogin(usuarioJson)
   };
 
   const [googleSubmitting, settGoogleSubmitting] = useState(false);
@@ -58,7 +70,7 @@ const Login = ({ navigation }) => {
           navigation.navigate('PesquisaInicial');
 
         } else {
-          throw error;
+          throw new Error("Não foi possivel efetuar login com o google");
         }
         settGoogleSubmitting(false);
 
@@ -127,6 +139,7 @@ const Login = ({ navigation }) => {
 
   const persistLogin = (credentials, message, status) => {
     console.log(credentials);
+
     AsyncStorage.setItem('CacaCursoCredentials', JSON.stringify(credentials))
       .then(() => {
         setStoredCredentials(credentials);
@@ -140,19 +153,30 @@ const Login = ({ navigation }) => {
     console.log("Caiu no validar");
     console.log(email);
     try {
-      const url = 'http://192.168.15.47:3000/usuario/carregar/' + encodeURIComponent(email);
+      const url = 'http://192.168.1.103:3000/usuario/carregar/' + encodeURIComponent(email);
 
-      await axios.get(url).then((response) => {
+      await axios.get(url).then(async (response) => {
         // setData(response.data.objeto);
         if (response.data == null) {
           // não carregou então grava
           //gravar no mysql via api Caça-Cursos
-          
+
           gravarUsuario(name, email, id, picture, provider);
         }
         else {
           //vai pra pesquisa pq já ta certo
           console.log("carregou o usuario com e-mail - " + email);
+
+          let usuarioJson = await AsyncStorage.getItem('CacaCursoCredentials')
+
+          usuarioJson = JSON.parse(usuarioJson)
+          console.log("Usuario transformado", usuarioJson.json)
+          console.log("Usuario vindo do banco", response.data)
+
+          usuarioJson.json["usuarioIdBanco"] = response.data.id
+
+          persistLogin(usuarioJson)
+
           navigation.navigate('PesquisaInicial');
         }
       });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios';
 
@@ -7,6 +7,9 @@ import IconAntDesign from '../components/iconAntDesign'
 import IconIonicons from '../components/iconIonicons'
 import BtnWithIcon from '../components/btnWithIcon'
 import Comentario from '../components/comentario'
+
+import { getUsuarioLogado } from '../../helpers/UsuarioLogado'
+import { useIsFocused } from '@react-navigation/core';
 
 console.log('renderizou')
 
@@ -67,35 +70,49 @@ console.log('renderizou')
 const Detalhes = (props) => {
 
     let newCurso = props.route.params.curso
+    const [usuarioLogado, setUsuarioLogado] = useState({});
+    const [avaliacaoGeral, setAvaliacaoGeral] = useState({});
+    const [, forceUpdate] = useState()
+    const [like, setLike] = useState(newCurso.Like);
+    const [dislike, setDislike] = useState(newCurso.Dislike);
 
-    onScreenLoad = async () => {
-        console.log("Caiu na função de load da página de configurações");
-        try {
-            validarBotoes();
-        } catch (error) {
-            console.log(error);
-        }
+    useEffect(() => {
+        console.log("Curso que chegou na detalhes: ", newCurso)
+        verificaCurso(newCurso.Link);
+        verificaUsuario()
+        verificaLikes()
+    }, []);
+
+    const isFocused = useIsFocused()
+
+    const zerarTela = () => {
+        setAvaliacaoGeral()
+        setLike(0)
+        setDislike(0)
     }
 
-    const [curso, setCurso] = useState(newCurso);
-
-    console.log("Curso: ", curso);
+    useEffect(() => {
+        zerarTela()
+        verificaUsuario()
+        verificaCurso(newCurso.Link);
+        verificaLikes()
+        forceUpdate()
+        console.log("verificando variaveis useState")
+        console.log("curso: ", newCurso.id)
+    }, [isFocused])
 
     const verificaCurso = async (curso_link) => {
         console.log("link do curso: ", curso_link);
         try {
-            const url = 'http://192.168.1.103:3000/curso/link';
+            const url = 'http://192.168.1.103:3000/curso/link?link=' + curso_link;
 
             console.log(url);
 
-            await axios.get(url, {
-                params: {
-                    link: curso_link
-                }
-            }).then((response) => {
+            await axios.get(url).then((response) => {
                 console.log('Data da consulta por link: ', response.data.objeto);
                 if (response.data.objeto) {
-                    setCurso(response.data.objeto)
+                    setLike(response.data.objeto.Like)
+                    setDislike(response.data.objeto.Dislike)
                 } else {
                     createNewCurso()
                 }
@@ -113,22 +130,122 @@ const Detalhes = (props) => {
     const createNewCurso = () => {
         const url = 'http://192.168.1.103:3000/curso';
 
-        console.log("curso que será criado: ", curso)
+        console.log("curso que será criado: ", newCurso)
 
         axios.post(url, {
-            curso: curso
+            curso: newCurso
         }).then((response) => {
             console.log('objeto do create: ', response.data.objeto);
-            setCurso(response.data.objeto);
         }).catch((err) => {
             console.log("Erro ao consultar url: " + url, err)
         });
     }
 
-    useEffect(() => {
-        console.log("Curso que chegou na detalhes: ", newCurso)
-        verificaCurso(newCurso.Link);
-    }, []);
+    const verificaUsuario = async () => {
+        const usuarioLogadoJson = await getUsuarioLogado()
+        const usuarioLogadoObj = JSON.parse(usuarioLogadoJson)
+        console.log("Usuario logado: ", usuarioLogadoObj)
+        setUsuarioLogado(usuarioLogadoObj.json)
+        if (usuarioLogadoObj) {
+            const url = "http://192.168.1.103:3000/avaliacaogeral/cursousuario?curso_id=" + newCurso.id + "&usuario_id=" + usuarioLogadoObj.json.usuarioIdBanco;
+
+            console.log("Usuario sendo verificado: ", usuarioLogadoObj.json)
+
+            axios.get(url).then((response) => {
+                console.log('Avalicao retornada: ', response.data.objeto);
+                console.log(response.data.objeto)
+                setAvaliacaoGeral(response.data.objeto)
+            }).catch((err) => {
+                console.log("Erro ao procurar: ", err)
+                console.log("Erro ao procurar: ", url)
+                if (err.response.status === 404) {
+                    console.log("Nenhuma avaliação encontrada!")
+                    setAvaliacaoGeral({})
+                } else {
+                    console.log("Erro ao consultar url: " + url, err.response)
+                }
+            });
+        }
+    }
+
+    ///////quando da um like, ela altera a variavel para um array de numero, o que força ela a criar novamente, pensar antes de fazer a logica amanha
+
+    const darAvaliacao = (like_dislike) => {
+        let url = "http://192.168.1.103:3000/avaliacaogeral"
+        console.log("Avaliação geral salva", avaliacaoGeral)
+        if (avaliacaoGeral && avaliacaoGeral.id) {
+            console.log("Url completa", url)
+            console.log("Id da avaliação", avaliacaoGeral)
+            axios.put(url,
+                {
+                    AvaliacaoGeral: like_dislike,
+                    AvaliacaoGeralId: avaliacaoGeral.id,
+                }).then((response) => {
+                    console.log("deu certo o update", response.data.mensagem)
+                    console.log("avaliação atualizada", response.data.objeto)
+                    setAvaliacaoGeral({ ...avaliacaoGeral, AvaliacaoGeral: like_dislike })
+                    verificaLikes()
+                }).catch((err) => {
+                    if (err.response.status === 404) {
+                        console.log("Nenhuma avaliação encontrada!")
+                    } else {
+                        console.log("Erro ao consultar url: " + url, err)
+                    }
+                });
+        } else {
+            console.log("Url completa", url)
+            console.log("Usuario logado no create", usuarioLogado)
+            axios.post(url,
+                {
+                    Curso_id: newCurso.id,
+                    Usuario_id: usuarioLogado.usuarioIdBanco,
+                    AvaliacaoGeral: like_dislike
+                }).then((response) => {
+                    console.log("deu certo com o create", response.data.mensagem)
+                    console.log("avaliação criada", response.data.objeto)
+                    setAvaliacaoGeral(response.data.objeto)
+                    verificaLikes()
+                }).catch((err) => {
+                    if (err.response.status === 404) {
+                        console.log("Url não encontrada!")
+                    } else {
+                        console.log("Erro ao consultar url: " + url, err.response)
+                    }
+                });
+        }
+    }
+
+    const retirarAvaliacao = () => {
+        axios.get(url).then((response) => {
+
+        }).catch((err) => {
+            if (err.response.status === 404) {
+                console.log("Nenhuma avaliação encontrada!")
+            } else {
+                console.log("Erro ao consultar url: " + url, err.response)
+            }
+        });
+    }
+
+    const verificaLikes = async () => {
+        let url = "http://192.168.1.103:3000/avaliacaogeral/getlikes?curso_id=" + newCurso.id
+
+        console.log("Verificando Likes e dislikes: ", like, " e ", dislike)
+
+        axios.get(url).then((response) => {
+            console.log("buscou os likes: ", response.data.mensagem)
+            console.log("likes pegados: ", response.data.objeto)
+            setLike(response.data.objeto.Like)
+            setDislike(response.data.objeto.Dislike)
+            forceUpdate()
+        }).catch((err) => {
+            if (err.response.status === 404) {
+                console.log("Url não encontrada!")
+            } else {
+                console.log("Erro ao consultar url: " + url, err.response)
+            }
+        });
+    }
 
     return (
         <SafeAreaView>
@@ -141,38 +258,48 @@ const Detalhes = (props) => {
             >
                 <View style={styles.container}>
                     <Text style={{ ...styles.box, ...styles.title }} >
-                        {curso.Nome}
+                        {newCurso.Nome}
                     </Text>
                     <Text
                         style={styles.box}
                         numberOfLines={6}
                     >
-                        {curso.Keywords}
+                        {newCurso.Descricao}
                     </Text>
                     <View style={styles.likeContainer}>
-                        <View style={styles.likeBox}>
+                        <TouchableOpacity style={styles.likeBox}
+                            onPress={() => {
+                                darAvaliacao(true)
+                                console.log("Like pressionado")
+                            }}
+                        >
                             <IconAntDesign icon='like1' size={50} />
                             <Text style={{ marginTop: 10 }}>
-                                {curso.Like ? curso.Like : 0}
+                                {like ? like : 0}
                             </Text>
-                        </View>
-                        <View style={styles.likeBox}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.likeBox}
+                            onPress={() => {
+                                darAvaliacao(false)
+                                console.log("Dislike pressionado")
+                            }}
+                        >
                             <IconAntDesign icon='dislike1' size={50} />
                             <Text style={{ marginTop: 10 }}>
-                                {curso.Dislike ? curso.Dislike : 0}
+                                {dislike ? dislike : 0}
                             </Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.comentarioContainer}>
                         <Text>Comentários</Text>
-                        {curso.listComentarios ?
+                        {newCurso.listComentarios ?
                             <Text style={{ ...styles.box, ...styles.title }}>
                                 Sem Avaliações
                             </Text>
                             : null}
                         <ScrollView>
                             {
-                                curso.listComentarios ? curso.listComentarios.map((item, index) => {
+                                newCurso.listComentarios ? newCurso.listComentarios.map((item, index) => {
                                     return (
                                         <View key={index}>
                                             <Comentario obj={item} />
