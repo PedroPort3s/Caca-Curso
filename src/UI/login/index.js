@@ -24,6 +24,7 @@ const Login = ({ navigation }) => {
 
     usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
     const newUsuario = await axios.post('http://192.168.15.47:3000/usuario',
+
       {
         nome: nome,
         email: email,
@@ -39,6 +40,7 @@ const Login = ({ navigation }) => {
       }
     )
 
+    usuarioJson.json["usuarioIdBanco"] = newUsuario.data.id
     console.log("Usuario banco", newUsuario.data)
 
     persistLogin(usuarioJson)
