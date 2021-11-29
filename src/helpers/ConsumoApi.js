@@ -1,7 +1,5 @@
 const helpers = {
-    urlApi: function () {
-        return "http://192.168.1.64:3000";
-    },
+    urlApi: "http://192.168.1.64:3000",
     MakeRequest: async function(url, metodo){
         const response = await fetch(url, {
         method: metodo});
