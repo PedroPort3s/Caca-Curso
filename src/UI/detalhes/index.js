@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios';
 import h from '../../helpers/ConsumoApi'
@@ -11,6 +11,7 @@ import Comentario from '../components/comentario'
 
 import { getUsuarioLogado } from '../../helpers/UsuarioLogado'
 import { useIsFocused } from '@react-navigation/core';
+import { TextInput } from 'react-native-gesture-handler';
 
 console.log('renderizou')
 
@@ -73,6 +74,7 @@ const Detalhes = (props) => {
     let newCurso = props.route.params.curso
     const [usuarioLogado, setUsuarioLogado] = useState({});
     const [avaliacaoGeral, setAvaliacaoGeral] = useState({});
+    const [comentario, setComentario] = useState("");
     const [, forceUpdate] = useState()
     const [like, setLike] = useState(newCurso.Like);
     const [dislike, setDislike] = useState(newCurso.Dislike);
@@ -219,6 +221,17 @@ const Detalhes = (props) => {
         }
     }
 
+    const PostarComentario = (comentario) => {
+        let url = `${h.urlApi}/avaliacaogeral`;
+        
+        axios.post().then((response) =>{
+
+        })
+        .catch((error) => {
+            alert(error.message);
+        });
+    }
+
     const retirarAvaliacao = () => {
         axios.get(url).then((response) => {
 
@@ -294,6 +307,36 @@ const Detalhes = (props) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+                    <View style={styles.acoesContainer}>
+                        <BtnWithIcon
+                            onPress={() => {
+                                console.log('favoritar pressionado')
+                            }}
+                            titulo='Favoritar'>
+                            <IconIonicons icon='heart-circle' size={30} />
+                        </BtnWithIcon>
+                        <BtnWithIcon
+                            onPress={() => {
+                                console.log('Ver curso pressionado');
+                                Linking.openURL(newCurso.Link);
+                            }}
+                            titulo='Ver curso'>
+                            <IconIonicons icon='arrow-forward-circle' size={30} />
+                        </BtnWithIcon>
+                    </View>
+
+                    <View>
+                        <TextInput onChangeText={setComentario}></TextInput>
+                        <BtnWithIcon
+                            onPress={() => {
+                                PostarComentario(comentario);
+                            }}
+                            titulo='Postar'>
+                            <IconIonicons icon='arrow-forward-circle' size={30} />
+                        </BtnWithIcon>
+                    </View>
+
                     <View style={styles.comentarioContainer}>
                         <Text>Comentários</Text>
                         {newCurso.listComentarios ?
@@ -312,22 +355,6 @@ const Detalhes = (props) => {
                                 }) : <Text style={{ ...styles.box, ...styles.title }}>Sem Avaliações</Text>
                             }
                         </ScrollView>
-                    </View>
-                    <View style={styles.acoesContainer}>
-                        <BtnWithIcon
-                            onPress={() => {
-                                console.log('favoritar pressionado')
-                            }}
-                            titulo='Favoritar'>
-                            <IconIonicons icon='heart-circle' size={30} />
-                        </BtnWithIcon>
-                        <BtnWithIcon
-                            onPress={() => {
-                                console.log('Ver curso pressionado')
-                            }}
-                            titulo='Ver curso'>
-                            <IconIonicons icon='arrow-forward-circle' size={30} />
-                        </BtnWithIcon>
                     </View>
                 </View>
             </ScrollView>

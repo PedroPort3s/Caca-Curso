@@ -83,7 +83,7 @@ const RecomendadosTela = ({ navigation }) => {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <View style={styles.container}>
-                    <Text style={styles.textosBasicos}>recomendados</Text>
+                    <Text style={styles.textosBasicos}>Recomendados</Text>
                     <ScrollView>
                         <View>
                             {data.length > 0 ? data.map((item, index) => (
@@ -108,7 +108,6 @@ const RecomendadosTela = ({ navigation }) => {
                                     <Text style={styles.msgRecomendados}>recomendação </Text>
                                     <Text style={styles.msgRecomendados}>para </Text>
                                     <Text style={styles.msgRecomendados}>você</Text>
-                                    <Text style={styles.msgRecomendados}>:c</Text>
                                 </View>}
                         </View>
                     </ScrollView>
