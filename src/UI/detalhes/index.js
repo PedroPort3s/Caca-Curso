@@ -170,7 +170,7 @@ const Detalhes = (props) => {
     const [cursoFavoritado, setCursoFavoritado] = useState({});
 
     const verificarFavorito = () => {
-        let url = "http://192.168.1.103:3000/usuariofavoritos/cursousuario?curso_id="+ idCurso +"&usuario_id="+ usuarioLogado.usuarioIdBanco
+        let url = "http://192.168.1.103:3000/usuariofavoritos/cursousuario?curso_id=" + idCurso + "&usuario_id=" + usuarioLogado.usuarioIdBanco
         console.log("Favorito salvo", cursoFavoritado)
         console.log("Url completa", url)
         console.log("Id do favorito: ", cursoFavoritado)

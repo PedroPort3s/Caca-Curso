@@ -25,11 +25,11 @@ const FavoritosTela = ({ navigation }) => {
 
     //função para validar login do SALAFRARIO
     async function validarBotoes() {
-        const usuarioLogadoJson = await getUsuarioLogado()
+        let usuarioLogadoJson = await getUsuarioLogado()
         if (usuarioLogadoJson !== null) {
-            const usuarioLogadoObj = JSON.parse(usuarioLogadoJson)
-            console.log("Usuario logado: ", usuarioLogadoObj)
-            setUsuarioLogadoObj(usuarioLogadoObj.json)
+            usuarioLogadoJson = JSON.parse(usuarioLogadoJson)
+            console.log("Usuario logado: ", usuarioLogadoJson)
+            setUsuarioLogadoObj(usuarioLogadoJson.json)
             
             console.log('Validou os botões nos favoritos')
             setUsuarioLogado(true);

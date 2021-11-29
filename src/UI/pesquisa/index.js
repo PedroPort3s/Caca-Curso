@@ -1,5 +1,5 @@
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from '../../../assets/styles/styles.js';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
