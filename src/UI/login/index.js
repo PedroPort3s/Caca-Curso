@@ -8,6 +8,7 @@ import { CredentialsContext } from '../../helpers/CredentialsContext';
 import { SocialIcon } from 'react-native-elements'
 import axios from 'axios';
 import { useIsFocused } from '@react-navigation/core';
+import h from '../../helpers/ConsumoApi';
 
 const Login = ({ navigation }) => {
 
@@ -23,8 +24,7 @@ const Login = ({ navigation }) => {
     usuarioJson = JSON.parse(usuarioJson)
     console.log("Usuario transformado", usuarioJson.json)
 
-    const newUsuario = await axios.post('http://192.168.1.103:3000/usuario',
-
+    const newUsuario = await axios.post(`${h.urlApi}//usuario`,
       {
         nome: nome,
         email: email,
@@ -171,7 +171,7 @@ const Login = ({ navigation }) => {
     console.log("Caiu no validar");
     console.log(email);
     try {
-      const url = 'http://192.168.1.103:3000/usuario/carregar/' + encodeURIComponent(email);
+      const url = `${h.urlApi}/usuario/carregar/` + encodeURIComponent(email);
 
       await axios.get(url).then(async (response) => {
         // setData(response.data.objeto);
@@ -198,10 +198,6 @@ const Login = ({ navigation }) => {
           navigation.navigate('PesquisaInicial');
         }
       });
-
-      // const resposta = await API.MakeRequest('http://localhost:3000/curso?p=java', 'GET');
-      // console.log(resposta);
-      // setData(resposta.movies);
     } catch (error) {
       console.log(error);
     }
@@ -242,7 +238,7 @@ const Login = ({ navigation }) => {
   }, [isFocused])
 
 
-  //função para validar login do SALAFRARIO
+  //função para validar login
   async function validarUsuarioLogado() {
     const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
     if (usuarioCache !== null) {

@@ -7,6 +7,7 @@ import Card from '../components/card'
 import ConfiguracoesTela from '../configuracoes';
 import DetalhesCursoTela from '../curso';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import h from '../../helpers/ConsumoApi';
 
 import {
     Input,
@@ -75,15 +76,16 @@ const PesquisaInicial = ({ navigation }) => {
     async function BuscarCursos() {
         try {
             setLoading(true);
-            const url = 'http://192.168.1.103:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
+            const url = `${h.urlApi}/curso/pesquisa?p=` + encodeURIComponent(palavraChave);
 
             console.log(url);
 
-            await axios.get(url).catch((err) => {
-                console.log("Erro ao consultar url: " + url, err)
-            }).then((response) => {
-                setData(response.data.objeto);
-            });
+            await axios.get(url)
+                .then((response) => {
+                    setData(response.data.objeto);
+                }).catch((error) => {
+                    alert("Atenção: " + error.response.data)
+                });
 
             const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
             console.log("Verificando string de listas", listaPesquisas)
@@ -100,7 +102,7 @@ const PesquisaInicial = ({ navigation }) => {
             }
 
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
         finally {
             setLoading(false);
@@ -129,40 +131,50 @@ const PesquisaInicial = ({ navigation }) => {
     else {
         return (
             <View style={styles.basico}>
-                <TextInput
-                    placeholder="Buscar Cursos"
-                    placeholderTextColor="#fff"
-                    color="#fff"
-                    style={{ top: 40, paddingTop: 40 }}
-                    onChangeText={setPalavraChave}
-                    value={palavraChave}
-                />
+                <View>
+                    <View>
+                        <TextInput
+                            placeholder="Buscar Cursos"
+                            placeholderTextColor="#fff"
+                            color="#fff"
+                            style={{ top: 40, paddingTop: 40, width: 220}}
+                            onChangeText={setPalavraChave}
+                            value={palavraChave}
+                        />
 
-                <Button
-                    title="Buscar"
-                    icon={{
-                        name: 'search',
-                        type: 'font-awesome',
-                        size: 15,
-                        color: 'white',
-                    }}
-                    iconContainerStyle={{ marginRight: 10 }}
-                    titleStyle={{ fontWeight: '700' }}
-                    buttonStyle={{
-                        backgroundColor: 'rgba(90, 154, 230, 1)',
-                        borderColor: 'transparent',
-                        borderWidth: 0,
-                        borderRadius: 30,
-                        marginTop: 50
-                    }}
-                    containerStyle={{
-                        width: 200,
-                        marginHorizontal: 50,
-                        marginVertical: 10,
-                    }}
-                    onPress={BuscarCursos}
-                    style={{ color: 'white', top: 70, paddingTop: 20 }}
-                />
+                    </View>
+                    <View>
+                        <Button
+                            title=""
+                            icon={{
+                                name: 'search',
+                                type: 'font-awesome',
+                                size: 15,
+                                color: 'white',
+                            }}
+                            iconContainerStyle={{ marginRight: 10 }}
+                            titleStyle={{ fontWeight: '700' }}
+                            buttonStyle={{
+                                backgroundColor: 'rgba(90, 154, 230, 1)',
+                                borderColor: 'transparent',
+                                borderWidth: 0,
+                                borderRadius: 30,
+                                marginLeft: 135                                
+                            }}
+                            containerStyle={{
+                                width: 200,
+                                marginHorizontal: 50,
+                                marginVertical: 10,
+                                marginLeft: 110
+                            }}
+                            onPress={BuscarCursos}
+                            style={{ color: 'white', top: 70, paddingTop: 20, justifyContent: 'flex-end' }}
+                            
+                        />
+
+                    </View>
+                </View>
+
 
                 <ScrollView style={styles.container}>
 

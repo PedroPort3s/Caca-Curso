@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import h from '../../helpers/ConsumoApi';
 
 import {
     RefreshControl,
@@ -44,7 +45,7 @@ const RecomendadosTela = ({ navigation }) => {
                 const list = listaPesquisas.split(",")
                 console.log("lista com pesquisas", list)
 
-                const url = 'http://192.168.1.103:3000/curso/tema?temas=' + listaPesquisas;
+                const url = `${h.urlApi}/curso/tema?temas=` + listaPesquisas;
 
                 console.log(url);
 
@@ -73,7 +74,7 @@ const RecomendadosTela = ({ navigation }) => {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <View style={styles.container}>
-                    <Text style={styles.textosBasicos}>recomendados</Text>
+                    <Text style={styles.textosBasicos}>Recomendados</Text>
                     <ScrollView>
                         <View>
                             {data.length > 0 ? data.map((item, index) => (
@@ -98,7 +99,6 @@ const RecomendadosTela = ({ navigation }) => {
                                     <Text style={styles.msgRecomendados}>recomendação </Text>
                                     <Text style={styles.msgRecomendados}>para </Text>
                                     <Text style={styles.msgRecomendados}>você</Text>
-                                    <Text style={styles.msgRecomendados}>:c</Text>
                                 </View>}
                         </View>
                     </ScrollView>
@@ -108,8 +108,8 @@ const RecomendadosTela = ({ navigation }) => {
     }
     else {
         return (
-            <SafeAreaView style={styles.basico}>
-                <View style={styles.basico}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     <Button
                         title="Para utilizar este recurso, é necessário estar logado"
                         onPress={() => navigation.navigate('LoginTela')}
