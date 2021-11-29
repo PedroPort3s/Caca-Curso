@@ -79,11 +79,13 @@ const PesquisaInicial = ({ navigation }) => {
 
             console.log(url);
 
-            await axios.get(url).catch((err) => {
-                console.log("Erro ao consultar url: " + url, err)
-            }).then((response) => {
-                setData(response.data.objeto);
-            });
+            await axios.get(url)
+                .then((response) => {
+                    // console.log("Resposta =-= " + response)
+                    setData(response.data.objeto);
+                }).catch((error) => {
+                    alert("Atenção: " + error.response.data)
+                });
 
             const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');
             console.log("Verificando string de listas", listaPesquisas)
@@ -100,7 +102,7 @@ const PesquisaInicial = ({ navigation }) => {
             }
 
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
         finally {
             setLoading(false);
@@ -117,13 +119,13 @@ const PesquisaInicial = ({ navigation }) => {
 
     if (loading) {
         return (
-        <View style={styles.basicoLoading}>  
-            <ActivityIndicator 
-                size="large"
-                color="green"
-            />
-            <Text style={styles.textoLoading}>Aguarde a consulta dos cursos em nossa API</Text>
-        </View>
+            <View style={styles.basicoLoading}>
+                <ActivityIndicator
+                    size="large"
+                    color="green"
+                />
+                <Text style={styles.textoLoading}>Aguarde a consulta dos cursos em nossa API</Text>
+            </View>
         );
     }
     else {
@@ -187,8 +189,3 @@ const PesquisaInicial = ({ navigation }) => {
 }
 
 export default PesquisaInicial;
-
-
-
-
-
