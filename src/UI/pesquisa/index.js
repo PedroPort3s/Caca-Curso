@@ -82,7 +82,6 @@ const PesquisaInicial = ({ navigation }) => {
 
             await axios.get(url)
                 .then((response) => {
-                    // console.log("Resposta =-= " + response)
                     setData(response.data.objeto);
                 }).catch((error) => {
                     alert("Atenção: " + error.response.data)
@@ -132,40 +131,50 @@ const PesquisaInicial = ({ navigation }) => {
     else {
         return (
             <View style={styles.basico}>
-                <TextInput
-                    placeholder="Buscar Cursos"
-                    placeholderTextColor="#fff"
-                    color="#fff"
-                    style={{ top: 40, paddingTop: 40 }}
-                    onChangeText={setPalavraChave}
-                    value={palavraChave}
-                />
+                <View>
+                    <View>
+                        <TextInput
+                            placeholder="Buscar Cursos"
+                            placeholderTextColor="#fff"
+                            color="#fff"
+                            style={{ top: 40, paddingTop: 40, width: 220}}
+                            onChangeText={setPalavraChave}
+                            value={palavraChave}
+                        />
 
-                <Button
-                    title="Buscar"
-                    icon={{
-                        name: 'search',
-                        type: 'font-awesome',
-                        size: 15,
-                        color: 'white',
-                    }}
-                    iconContainerStyle={{ marginRight: 10 }}
-                    titleStyle={{ fontWeight: '700' }}
-                    buttonStyle={{
-                        backgroundColor: 'rgba(90, 154, 230, 1)',
-                        borderColor: 'transparent',
-                        borderWidth: 0,
-                        borderRadius: 30,
-                        marginTop: 50
-                    }}
-                    containerStyle={{
-                        width: 200,
-                        marginHorizontal: 50,
-                        marginVertical: 10,
-                    }}
-                    onPress={BuscarCursos}
-                    style={{ color: 'white', top: 70, paddingTop: 20 }}
-                />
+                    </View>
+                    <View>
+                        <Button
+                            title=""
+                            icon={{
+                                name: 'search',
+                                type: 'font-awesome',
+                                size: 15,
+                                color: 'white',
+                            }}
+                            iconContainerStyle={{ marginRight: 10 }}
+                            titleStyle={{ fontWeight: '700' }}
+                            buttonStyle={{
+                                backgroundColor: 'rgba(90, 154, 230, 1)',
+                                borderColor: 'transparent',
+                                borderWidth: 0,
+                                borderRadius: 30,
+                                marginLeft: 135                                
+                            }}
+                            containerStyle={{
+                                width: 200,
+                                marginHorizontal: 50,
+                                marginVertical: 10,
+                                marginLeft: 110
+                            }}
+                            onPress={BuscarCursos}
+                            style={{ color: 'white', top: 70, paddingTop: 20, justifyContent: 'flex-end' }}
+                            
+                        />
+
+                    </View>
+                </View>
+
 
                 <ScrollView style={styles.container}>
 
