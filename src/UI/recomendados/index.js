@@ -68,7 +68,7 @@ const RecomendadosTela = ({ navigation }) => {
     }, [isFocused])
 
 
-    //função para validar login do SALAFRARIO
+    //função para validar login
     async function validarBotoes() {
         const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
         if (usuarioCache !== null) {
