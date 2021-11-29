@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios';
+import h from '../../helpers/ConsumoApi'
 
 import IconAntDesign from '../components/iconAntDesign'
 import IconIonicons from '../components/iconIonicons'
@@ -104,7 +105,7 @@ const Detalhes = (props) => {
     const verificaCurso = async (curso_link) => {
         console.log("link do curso: ", curso_link);
         try {
-            const url = 'http://192.168.15.47:3000/curso/link?link=' + curso_link;
+            const url = `${h.urlApi}/curso/link?link=` + curso_link;
 
             console.log(url);
 
@@ -130,7 +131,7 @@ const Detalhes = (props) => {
     };
 
     const createNewCurso = () => {
-        const url = 'http://192.168.15.47:3000/curso';
+        const url = `${h.urlApi}/curso`;
 
         console.log("curso que será criado: ", newCurso)
 
@@ -150,7 +151,7 @@ const Detalhes = (props) => {
         console.log("Usuario logado: ", usuarioLogadoObj)
         setUsuarioLogado(usuarioLogadoObj.json)
         if (usuarioLogadoObj) {
-            const url = "http://192.168.15.47:3000/avaliacaogeral/cursousuario?curso_id=" + newCurso.id + "&usuario_id=" + usuarioLogadoObj.json.usuarioIdBanco;
+            const url = `${h.urlApi}/avaliacaogeral/cursousuario?curso_id=` + newCurso.id + "&usuario_id=" + usuarioLogadoObj.json.usuarioIdBanco;
 
             console.log("Usuario sendo verificado: ", usuarioLogadoObj.json)
 
@@ -173,7 +174,7 @@ const Detalhes = (props) => {
     ///////quando da um like, ela altera a variavel para um array de numero, o que força ela a criar novamente, pensar antes de fazer a logica amanha
 
     const darAvaliacao = (like_dislike) => {
-        let url = "http://192.168.15.47:3000/avaliacaogeral"
+        let url = `${h.urlApi}/avaliacaogeral`;
         console.log("Avaliação geral salva", avaliacaoGeral)
         if (avaliacaoGeral && avaliacaoGeral.id) {
             console.log("Url completa", url)
@@ -231,7 +232,7 @@ const Detalhes = (props) => {
     }
 
     const verificaLikes = async () => {
-        let url = "http://192.168.15.47:3000/avaliacaogeral/getlikes?curso_id=" + newCurso.id
+        let url = `${h.urlApi}//avaliacaogeral/getlikes?curso_id=` + newCurso.id
 
         console.log("Verificando Likes e dislikes: ", like, " e ", dislike)
 

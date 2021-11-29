@@ -149,8 +149,7 @@ export default function ConfiguracoesTela({ navigation }) {
                 </ScrollView>
             </SafeAreaView>
         );
-    }
-
+    }   
 }
 
 const styles = StyleSheet.create({

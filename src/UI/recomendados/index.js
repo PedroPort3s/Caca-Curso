@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import h from '../../helpers/ConsumoApi';
 
 import {
     RefreshControl,
@@ -30,7 +31,7 @@ const RecomendadosTela = ({ navigation }) => {
                 const list = listaPesquisas.split(",")
                 console.log("lista com pesquisas", list)
 
-                const url = 'http://192.168.15.47:3000/curso/tema?temas=' + listaPesquisas;
+                const url = `${h.urlApi}/curso/tema?temas=` + listaPesquisas;
 
                 console.log(url);
 

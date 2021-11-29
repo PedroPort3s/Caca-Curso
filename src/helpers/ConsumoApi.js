@@ -1,6 +1,6 @@
 const helpers = {
-    teste1: function(){
-        console.log('teste');
+    urlApi: function () {
+        return "http://192.168.1.64:3000";
     },
     MakeRequest: async function(url, metodo){
         const response = await fetch(url, {
@@ -12,9 +12,6 @@ const helpers = {
        
         const json = await response.json();
         return json;
-    },
-    teste3: function(param1, param2){
-
     }
 }
 

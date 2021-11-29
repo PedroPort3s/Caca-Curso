@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import styles from './style.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import h from '../../helpers/ConsumoApi';
 
 import {
     Text,
@@ -9,8 +10,6 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-
-
 
 const UsuarioTela = ({ navigation }) => {
 

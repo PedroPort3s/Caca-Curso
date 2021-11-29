@@ -7,6 +7,7 @@ import Card from '../components/card'
 import ConfiguracoesTela from '../configuracoes';
 import DetalhesCursoTela from '../curso';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import h from '../../helpers/ConsumoApi';
 
 import {
     Input,
@@ -75,7 +76,7 @@ const PesquisaInicial = ({ navigation }) => {
     async function BuscarCursos() {
         try {
             setLoading(true);
-            const url = 'http://192.168.15.47:3000/curso/pesquisa?p=' + encodeURIComponent(palavraChave);
+            const url = `${h.urlApi}/curso/pesquisa?p=` + encodeURIComponent(palavraChave);
 
             console.log(url);
 
