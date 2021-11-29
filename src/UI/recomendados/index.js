@@ -20,6 +20,20 @@ const RecomendadosTela = ({ navigation }) => {
 
     const [usuarioLogado, setUsuarioLogado] = useState();
 
+    const isFocused = useIsFocused()
+
+    //função para validar login do SALAFRARIO
+    async function validarBotoes() {
+        const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
+        if (usuarioCache !== null) {
+            console.log('Validou os botões na recomendados')
+            setUsuarioLogado(true);
+        }
+        else {
+            setUsuarioLogado(false);
+        }
+    }
+
     const [data, setData] = useState([]);
 
     async function BuscarCursos() {
@@ -48,36 +62,13 @@ const RecomendadosTela = ({ navigation }) => {
         finally {
             // setLoading(false);
         }
-
     };
-
-    async function CarregarCurso() {
-        try {
-            navigation.navigate('DetalhesCursoTela', { curso: item });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const isFocused = useIsFocused()
 
     useEffect(() => {
         BuscarCursos()
         validarBotoes()
     }, [isFocused])
 
-
-    //função para validar login do SALAFRARIO
-    async function validarBotoes() {
-        const usuarioCache = await AsyncStorage.getItem('CacaCursoCredentials');
-        if (usuarioCache !== null) {
-            console.log('Validou os botões na recomendados')
-            setUsuarioLogado(true);
-        }
-        else {
-            setUsuarioLogado(false);
-        }
-    }
     if (usuarioLogado) {
         return (
             <SafeAreaView style={{ flex: 1 }}>

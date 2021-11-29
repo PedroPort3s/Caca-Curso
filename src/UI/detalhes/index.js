@@ -80,10 +80,12 @@ const Detalhes = (props) => {
     useEffect(() => {
         console.log("Curso que chegou na detalhes: ", newCurso)
         verificaUsuario()
+        // verificarFavorito()
     }, []);
 
     useEffect(() => {
         verificaUsuario()
+        verificarFavorito()
     }, [idCurso]);
 
     const isFocused = useIsFocused()
@@ -165,6 +167,66 @@ const Detalhes = (props) => {
 
     ///////quando da um like, ela altera a variavel para um array de numero, o que força ela a criar novamente, pensar antes de fazer a logica amanha
 
+    const [cursoFavoritado, setCursoFavoritado] = useState({});
+
+    const verificarFavorito = () => {
+        let url = "http://192.168.1.103:3000/usuariofavoritos/cursousuario?curso_id="+ idCurso +"&usuario_id="+ usuarioLogado.usuarioIdBanco
+        console.log("Favorito salvo", cursoFavoritado)
+        console.log("Url completa", url)
+        console.log("Id do favorito: ", cursoFavoritado)
+        axios.get(url).then((response) => {
+            console.log("deu certo a busca ", response.data.mensagem)
+            console.log("Favorito encontrado ", response.data.objeto)
+            setCursoFavoritado(response.data.objeto)
+        }).catch((err) => {
+            if (err.response.status === 404) {
+                console.log("Nenhum favorito encontrado!")
+            } else {
+                console.log("Erro ao consultar url: " + url, err)
+            }
+        });
+    }
+
+    const favoritarCurso = () => {
+        let url = "http://192.168.1.103:3000/usuariofavoritos"
+        console.log("Favorito salvo", cursoFavoritado)
+        if (cursoFavoritado && cursoFavoritado.id) {
+            url = url + "/id/" + cursoFavoritado.id
+            console.log("Url completa", url)
+            console.log("Id do favorito: ", cursoFavoritado)
+            axios.delete(url).then((response) => {
+                console.log("deu certo o delete", response.data.mensagem)
+                console.log("Favorito deletado", response.data.objeto)
+                setCursoFavoritado({})
+            }).catch((err) => {
+                if (err.response.status === 404) {
+                    console.log("Nenhuma avaliação encontrada!")
+                } else {
+                    console.log("Erro ao consultar url: " + url, err)
+                }
+            });
+        } else {
+            console.log("Url completa", url)
+            console.log("Usuario logado no create", usuarioLogado)
+            console.log("Novo favorito sendo criado com o curdo id:", newCurso.id, " e usuario id: ", usuarioLogado.usuarioIdBanco)
+            axios.post(url,
+                {
+                    Curso_id: idCurso,
+                    Usuario_id: usuarioLogado.usuarioIdBanco,
+                }).then((response) => {
+                    console.log("deu certo com o create: ", response.data.mensagem)
+                    console.log("favorito criado: ", response.data.objeto)
+                    setCursoFavoritado(response.data.objeto)
+                }).catch((err) => {
+                    if (err.response.status === 404) {
+                        console.log("Url não encontrada!")
+                    } else {
+                        console.log("Erro ao consultar url: " + url, err.response)
+                    }
+                });
+        }
+    }
+
     const darAvaliacao = (like_dislike) => {
         let url = "http://192.168.1.103:3000/avaliacaogeral"
         console.log("Avaliação geral salva", avaliacaoGeral)
@@ -223,24 +285,6 @@ const Detalhes = (props) => {
         });
     }
 
-    const verificaAvaliacao = () => {
-        console.log("Usuario sendo verificado e id do curso: ", usuarioLogado, " e ", idCurso)
-        
-        const url = "http://192.168.1.103:3000/avaliacaogeral/cursousuario?curso_id=" + idCurso + "&usuario_id=" + usuarioLogado.json.usuarioIdBanco;
-
-        axios.get(url).then((response) => {
-            console.log('Avalicao retornada: ', response.data.objeto);
-            setAvaliacaoGeral(response.data.objeto)
-        }).catch((err) => {
-            console.log("Erro ao procurar: ", url)
-            if (err.response.status === 404) {
-                console.log("Nenhuma avaliação encontrada!")
-            } else {
-                console.log("Erro ao consultar url: " + url, err.response)
-            }
-        });
-    }
-
     const verificaLikes = async () => {
         let url = "http://192.168.1.103:3000/avaliacaogeral/getlikes?curso_id=" + idCurso
 
@@ -259,6 +303,39 @@ const Detalhes = (props) => {
                 console.log("Erro ao consultar url: " + url, err.response)
             }
         });
+    }
+
+    const viewIconLike = () => {
+        if (avaliacaoGeral && avaliacaoGeral.AvaliacaoGeral !== null) {
+            if (avaliacaoGeral.AvaliacaoGeral) {
+                return <IconAntDesign icon='like1' size={50} />
+            } else {
+                return <IconAntDesign icon='like2' size={50} />
+            }
+        } else {
+            return <IconAntDesign icon='like2' size={50} />
+        }
+    }
+
+    const viewIconDislike = () => {
+        if (avaliacaoGeral && avaliacaoGeral.AvaliacaoGeral !== null) {
+            if (avaliacaoGeral.AvaliacaoGeral) {
+                return <IconAntDesign icon='dislike2' size={50} />
+            } else {
+                return <IconAntDesign icon='dislike1' size={50} />
+            }
+        } else {
+            return <IconAntDesign icon='dislike2' size={50} />
+        }
+    }
+
+    const viewIconFavorito = () => {
+        console.log("curso favorito: ", cursoFavoritado)
+        if (cursoFavoritado && cursoFavoritado.id) {
+            return <IconIonicons icon='heart' size={30} />
+        } else {
+            return <IconIonicons icon='heart-dislike' size={30} />
+        }
     }
 
     return (
@@ -287,7 +364,7 @@ const Detalhes = (props) => {
                                 console.log("Like pressionado")
                             }}
                         >
-                            <IconAntDesign icon='like1' size={50} />
+                            {viewIconLike()}
                             <Text style={{ marginTop: 10 }}>
                                 {like ? like : 0}
                             </Text>
@@ -298,7 +375,7 @@ const Detalhes = (props) => {
                                 console.log("Dislike pressionado")
                             }}
                         >
-                            <IconAntDesign icon='dislike1' size={50} />
+                            {viewIconDislike()}
                             <Text style={{ marginTop: 10 }}>
                                 {console.log("verificando avaliacaoGeral: ", avaliacaoGeral)}
                                 {dislike ? dislike : 0}
@@ -327,10 +404,11 @@ const Detalhes = (props) => {
                     <View style={styles.acoesContainer}>
                         <BtnWithIcon
                             onPress={() => {
+                                favoritarCurso()
                                 console.log('favoritar pressionado')
                             }}
                             titulo='Favoritar'>
-                            <IconIonicons icon='heart-circle' size={30} />
+                            {viewIconFavorito()}
                         </BtnWithIcon>
                         <BtnWithIcon
                             onPress={() => {
