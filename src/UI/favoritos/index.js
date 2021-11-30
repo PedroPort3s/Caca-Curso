@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import h from '../../helpers/ConsumoApi';
 
 import {
     Button,

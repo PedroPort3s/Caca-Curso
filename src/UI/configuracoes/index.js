@@ -73,7 +73,7 @@ export default function ConfiguracoesTela({ navigation }) {
                                 borderRadius: 50,
                                 marginTop: 10
                             }}
-                            onClick={() => { alert("Favoritos!") }}
+                            onClick={() => navigation.navigate('FavoritosTela')}
                         />
 
                         <Button
@@ -83,7 +83,7 @@ export default function ConfiguracoesTela({ navigation }) {
                                 borderRadius: 50,
                                 marginTop: 10
                             }}
-                            onClick={() => { alert("Recomendados!") }}
+                            onClick={() => navigation.navigate('RecomendadosTela')}
                         />
 
                         <Button
