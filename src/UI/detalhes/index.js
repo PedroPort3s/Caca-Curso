@@ -417,8 +417,8 @@ const Detalhes = (props) => {
                         </BtnWithIcon>
                     </View>
 
-                    <View>
-                        <TextInput onChangeText={setComentario}></TextInput>
+                    <View style={styles.container}>
+                        <TextInput style={styles.box} numberOfLines={6} multiline onChangeText={setComentario}></TextInput>
                         <BtnWithIcon
                             onPress={() => {
                                 PostarComentario(comentario);
@@ -488,6 +488,18 @@ const styles = StyleSheet.create({
     likeBox: {
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    inputComentarioContainer: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    inputComentario: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     box: {
         color: 'black',
