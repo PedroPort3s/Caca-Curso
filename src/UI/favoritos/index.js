@@ -45,7 +45,7 @@ const FavoritosTela = ({ navigation }) => {
         try {
             if (usuarioLogadoObj) {
                 //Tenho de pegar os que são favoritos
-                const url = 'http://192.168.1.103:3000/usuariofavoritos?usuario_id=' + usuarioLogadoObj.usuarioIdBanco;
+                const url = `${h.urlApi}/usuariofavoritos?usuario_id=` + usuarioLogadoObj.usuarioIdBanco;
 
                 console.log(url);
                 console.log("url de busca dos favoritos: ", url)

@@ -71,10 +71,11 @@ console.log('renderizou')
 
 const Detalhes = (props) => {
 
-    let newCurso = props.route.params.curso
+    let newCurso = props.route.params.curso;
     const [usuarioLogado, setUsuarioLogado] = useState({});
     const [avaliacaoGeral, setAvaliacaoGeral] = useState({});
     const [comentario, setComentario] = useState("");
+    const [comentarios, setComentarios] = useState([]);
     const [, forceUpdate] = useState()
     const [idCurso, setIdCurso] = useState();
     const [like, setLike] = useState();
@@ -87,8 +88,9 @@ const Detalhes = (props) => {
     }, []);
 
     useEffect(() => {
-        verificaUsuario()
-        verificarFavorito()
+        verificaUsuario();
+        verificarFavorito();
+        verificaComentarios();
     }, [idCurso]);
 
     const isFocused = useIsFocused()
@@ -113,6 +115,7 @@ const Detalhes = (props) => {
                     setDislike(response.data.objeto.Dislike)
                     console.log("novo curso: ", response.data.objeto)
                     setIdCurso(response.data.objeto.id)
+                    
                 } else {
                     createNewCurso()
                 }
@@ -136,10 +139,10 @@ const Detalhes = (props) => {
             curso: newCurso
         }).then((response) => {
             console.log('objeto do create: ', response.data.objeto);
-            setIdCurso(response.data.objeto.id)
-            verificaLikes()
+            setIdCurso(response.data.objeto.id);
+            verificaLikes();
         }).catch((err) => {
-            console.log("Erro ao consultar url: " + url, err)
+            console.log("Erro ao consultar url: " + url, err);
         });
     }
 
@@ -168,12 +171,70 @@ const Detalhes = (props) => {
         }
     }
 
+    const verificaComentarios = async () => {
+        const usuarioLogadoJson = await getUsuarioLogado();
+        const usuarioLogadoObj = JSON.parse(usuarioLogadoJson);
+        setUsuarioLogado(usuarioLogadoObj.json);
+
+        console.log("usuario logado obj" + usuarioLogadoObj);
+
+        if (usuarioLogadoObj) {
+            const url = `${h.urlApi}/avaliacao/curso/${idCurso}`;
+
+            console.log("url verificar comentários " + url);
+
+            axios.get(url).then((response) => {
+                console.log('comentarios retornados: ', response.data);
+                
+                setComentarios(response.data);
+            }).catch((err) => {
+                console.log("Erro ao procurar: ", err)
+                console.log("Erro ao procurar: ", url)
+                if (err.response.status === 404) {
+                    console.log("Nenhum comentario encontrado!")
+                } else {
+                    console.log("Erro ao consultar url: " + url, err.response)
+                }
+            });
+        }
+    }
+
     ///////quando da um like, ela altera a variavel para um array de numero, o que força ela a criar novamente, pensar antes de fazer a logica amanha
 
     const [cursoFavoritado, setCursoFavoritado] = useState({});
 
+    const PostarComentario = async () => {
+        try {
+            if (comentario == '' || comentario == null) {
+                throw new Error('Informe o comentário para postar.');
+            }
+
+            console.log("usuario logado - logado usuario ", usuarioLogado);
+            if (!usuarioLogado){
+                throw new Error('Para fazer um comentário, é preciso estar logado.');
+            }
+
+            let url = `${h.urlApi}/avaliacao`;
+
+            await axios.post(url, 
+            {
+                Usuario_id: usuarioLogado.usuarioIdBanco,
+                Curso_id: idCurso,
+                Comentario: comentario
+            }).then((response) => {
+                console.log("Comentario postado com sucesso");
+                setComentario("");
+                verificaComentarios();
+            }).catch((error) => {
+                console.log(error.response);
+            });    
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
     const verificarFavorito = () => {
-        let url = "http://192.168.1.103:3000/usuariofavoritos/cursousuario?curso_id=" + idCurso + "&usuario_id=" + usuarioLogado.usuarioIdBanco
+        let url = `${h.urlApi}/usuariofavoritos/cursousuario?curso_id=` + idCurso + "&usuario_id=" + usuarioLogado.usuarioIdBanco
         console.log("Favorito salvo", cursoFavoritado)
         console.log("Url completa", url)
         console.log("Id do favorito: ", cursoFavoritado)
@@ -191,7 +252,7 @@ const Detalhes = (props) => {
     }
 
     const favoritarCurso = () => {
-        let url = "http://192.168.1.103:3000/usuariofavoritos"
+        let url = `${h.urlApi}/usuariofavoritos`;
         console.log("Favorito salvo", cursoFavoritado)
         if (cursoFavoritado && cursoFavoritado.id) {
             url = url + "/id/" + cursoFavoritado.id
@@ -277,17 +338,6 @@ const Detalhes = (props) => {
         }
     }
 
-    const PostarComentario = (comentario) => {
-        let url = `${h.urlApi}/avaliacaogeral`;
-
-        axios.post().then((response) => {
-
-        })
-            .catch((error) => {
-                alert(error.message);
-            });
-    }
-
     const retirarAvaliacao = () => {
         axios.get(url).then((response) => {
 
@@ -313,9 +363,9 @@ const Detalhes = (props) => {
             forceUpdate()
         }).catch((err) => {
             if (err.response.status === 404) {
-                console.log("Url não encontrada!")
+                console.log("Url não encontrada!");
             } else {
-                console.log("Erro ao consultar url: " + url, err.response)
+                console.log("Erro ao consultar url: " + url, err.response);
             }
         });
     }
@@ -418,10 +468,10 @@ const Detalhes = (props) => {
                     </View>
 
                     <View style={styles.container}>
-                        <TextInput style={styles.box} numberOfLines={6} multiline onChangeText={setComentario}></TextInput>
+                        <TextInput style={styles.box} numberOfLines={6} value={comentario} multiline onChangeText={setComentario}></TextInput>
                         <BtnWithIcon
                             onPress={() => {
-                                PostarComentario(comentario);
+                                PostarComentario();
                             }}
                             titulo='Postar'>
                             <IconIonicons icon='arrow-forward-circle' size={30} />
@@ -437,7 +487,7 @@ const Detalhes = (props) => {
                             : null}
                         <ScrollView>
                             {
-                                newCurso.listComentarios ? newCurso.listComentarios.map((item, index) => {
+                                comentarios ? comentarios.map((item, index) => {
                                     return (
                                         <View key={index}>
                                             <Comentario obj={item} />

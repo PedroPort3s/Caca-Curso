@@ -2,13 +2,15 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const Comentario = (props) => {
+    console.log("componente props.comentario ", props.obj.Comentario);
+
     return (
         <View style={styles.container}>
             <Text style={{ ...styles.box, ...styles.text }} >
-                {props.obj.nomeAuthor}
+                {props.obj.Usuario.Nome}
             </Text>
-            <Text numberOfLines={2} style={{ ...styles.box, ...styles.text }} >
-                {props.obj.comentario}
+            <Text multiline style={{ ...styles.box, ...styles.text }} >
+                {props.obj.Comentario}
             </Text>
         </View>
     )
