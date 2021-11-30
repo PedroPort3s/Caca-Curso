@@ -102,7 +102,6 @@ const Detalhes = (props) => {
     const verificaCurso = async (curso_link) => {
         console.log("link do curso: ", curso_link);
         try {
-            const url = 'http://192.168.1.103:3000/curso/link?link=' + curso_link;
             const url = `${h.urlApi}/curso/link?link=` + curso_link;
 
             console.log(url);
@@ -280,13 +279,13 @@ const Detalhes = (props) => {
 
     const PostarComentario = (comentario) => {
         let url = `${h.urlApi}/avaliacaogeral`;
-        
-        axios.post().then((response) =>{
+
+        axios.post().then((response) => {
 
         })
-        .catch((error) => {
-            alert(error.message);
-        });
+            .catch((error) => {
+                alert(error.message);
+            });
     }
 
     const retirarAvaliacao = () => {
@@ -302,7 +301,7 @@ const Detalhes = (props) => {
     }
 
     const verificaLikes = async () => {
-        let url = `${h.urlApi}//avaliacaogeral/getlikes?curso_id=` + idCurso
+        let url = `${h.urlApi}/avaliacaogeral/getlikes?curso_id=` + idCurso
 
         console.log("Verificando Likes e dislikes: ", like, " e ", dislike)
 
@@ -348,9 +347,9 @@ const Detalhes = (props) => {
     const viewIconFavorito = () => {
         console.log("curso favorito: ", cursoFavoritado)
         if (cursoFavoritado && cursoFavoritado.id) {
-            return <IconIonicons icon='heart' size={30} />
-        } else {
             return <IconIonicons icon='heart-dislike' size={30} />
+        } else {
+            return <IconIonicons icon='heart' size={30} />
         }
     }
 
@@ -402,14 +401,15 @@ const Detalhes = (props) => {
                     <View style={styles.acoesContainer}>
                         <BtnWithIcon
                             onPress={() => {
+                                favoritarCurso()
                                 console.log('favoritar pressionado')
                             }}
                             titulo='Favoritar'>
-                            <IconIonicons icon='heart-circle' size={30} />
+                            {viewIconFavorito()}
                         </BtnWithIcon>
                         <BtnWithIcon
                             onPress={() => {
-                                console.log('Ver curso pressionado');
+                                console.log('Ver curso pressionado')
                                 Linking.openURL(newCurso.Link);
                             }}
                             titulo='Ver curso'>
@@ -446,24 +446,6 @@ const Detalhes = (props) => {
                                 }) : <Text style={{ ...styles.box, ...styles.title }}>Sem Avaliações</Text>
                             }
                         </ScrollView>
-                    </View>
-                    <View style={styles.acoesContainer}>
-                        <BtnWithIcon
-                            onPress={() => {
-                                favoritarCurso()
-                                console.log('favoritar pressionado')
-                            }}
-                            titulo='Favoritar'>
-                            {viewIconFavorito()}
-                        </BtnWithIcon>
-                        <BtnWithIcon
-                            onPress={() => {
-                                console.log('Ver curso pressionado')
-                                Linking.openURL(newCurso.Link);
-                            }}
-                            titulo='Ver curso'>
-                            <IconIonicons icon='arrow-forward-circle' size={30} />
-                        </BtnWithIcon>
                     </View>
                 </View>
             </ScrollView>

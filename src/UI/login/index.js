@@ -24,7 +24,7 @@ const Login = ({ navigation }) => {
     usuarioJson = JSON.parse(usuarioJson)
     console.log("Usuario transformado", usuarioJson.json)
 
-    const newUsuario = await axios.post(`${h.urlApi}//usuario`,
+    const newUsuario = await axios.post(`${h.urlApi}/usuario`,
       {
         nome: nome,
         email: email,
