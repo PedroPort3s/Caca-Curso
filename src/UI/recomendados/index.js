@@ -79,11 +79,12 @@ const RecomendadosTela = ({ navigation }) => {
                         <View>
                             {data.length > 0 ? data.map((item, index) => (
                                 <View key={index}>
+                                    {console.log("Item com o provider: ", item)}
                                     <Card
                                         nome={item.Nome}
                                         keywords={item.Keywords}
                                         link={item.Link}
-                                        temaPrincipal={item.TemaPrincipal}
+                                        temaPrincipal={""}
                                         urlImagem={item.UrlImagem}
                                         CarregarCurso={() => {
                                             navigation.navigate("Detalhes", { curso: item })

@@ -18,7 +18,7 @@ const Card = (props) => {
             </View>
             <View style={styles.containerDesc}>
                 <Text style={styles.title}>{props.nome}</Text>
-                <Text style={styles.temaPrincipal}>tema abordado: {props.temaPrincipal}</Text>
+                <Text style={styles.temaPrincipal}>{props.temaPrincipal}</Text>
                 <Button
                     style={styles.btn}
                     // onPress={() => Linking.openURL(props.link)}

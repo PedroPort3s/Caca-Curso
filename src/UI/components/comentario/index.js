@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const Comentario = (props) => {
-    console.log("componente props.comentario ", props.obj.Comentario);
+    console.log("componente props.comentario ", props.obj);
 
     return (
         <View style={styles.container}>

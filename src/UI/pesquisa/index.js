@@ -137,7 +137,7 @@ const PesquisaInicial = ({ navigation }) => {
                             placeholder="Buscar Cursos"
                             placeholderTextColor="#fff"
                             color="#fff"
-                            style={{ top: 40, paddingTop: 40, width: 220}}
+                            style={{ top: 40, marginStart: 100,paddingTop: 40, width: 220}}
                             onChangeText={setPalavraChave}
                             value={palavraChave}
                         />

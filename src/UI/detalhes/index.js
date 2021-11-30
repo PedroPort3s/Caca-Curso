@@ -115,7 +115,7 @@ const Detalhes = (props) => {
                     setDislike(response.data.objeto.Dislike)
                     console.log("novo curso: ", response.data.objeto)
                     setIdCurso(response.data.objeto.id)
-                    
+
                 } else {
                     createNewCurso()
                 }
@@ -185,7 +185,7 @@ const Detalhes = (props) => {
 
             axios.get(url).then((response) => {
                 console.log('comentarios retornados: ', response.data);
-                
+
                 setComentarios(response.data);
             }).catch((err) => {
                 console.log("Erro ao procurar: ", err)
@@ -210,24 +210,24 @@ const Detalhes = (props) => {
             }
 
             console.log("usuario logado - logado usuario ", usuarioLogado);
-            if (!usuarioLogado){
+            if (!usuarioLogado) {
                 throw new Error('Para fazer um comentário, é preciso estar logado.');
             }
 
             let url = `${h.urlApi}/avaliacao`;
 
-            await axios.post(url, 
-            {
-                Usuario_id: usuarioLogado.usuarioIdBanco,
-                Curso_id: idCurso,
-                Comentario: comentario
-            }).then((response) => {
-                console.log("Comentario postado com sucesso");
-                setComentario("");
-                verificaComentarios();
-            }).catch((error) => {
-                console.log(error.response);
-            });    
+            await axios.post(url,
+                {
+                    Usuario_id: usuarioLogado.usuarioIdBanco,
+                    Curso_id: idCurso,
+                    Comentario: comentario
+                }).then((response) => {
+                    console.log("Comentario postado com sucesso");
+                    setComentario("");
+                    verificaComentarios();
+                }).catch((error) => {
+                    console.log(error.response);
+                });
         } catch (error) {
             alert(error.message);
         }
@@ -405,13 +405,7 @@ const Detalhes = (props) => {
 
     return (
         <SafeAreaView>
-            <ScrollView
-                contentContainerStyle={{
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                }}
-            >
+            <ScrollView>
                 <View style={styles.container}>
                     <Text style={{ ...styles.box, ...styles.title }} >
                         {newCurso.Nome}
@@ -467,16 +461,14 @@ const Detalhes = (props) => {
                         </BtnWithIcon>
                     </View>
 
-                    <View style={styles.container}>
-                        <TextInput style={styles.box} numberOfLines={6} value={comentario} multiline onChangeText={setComentario}></TextInput>
-                        <BtnWithIcon
-                            onPress={() => {
-                                PostarComentario();
-                            }}
-                            titulo='Postar'>
-                            <IconIonicons icon='arrow-forward-circle' size={30} />
-                        </BtnWithIcon>
-                    </View>
+                    <TextInput style={{ ...styles.box, ...styles.inputComentario }} numberOfLines={3} value={comentario} multiline onChangeText={setComentario}></TextInput>
+                    <BtnWithIcon
+                        onPress={() => {
+                            PostarComentario();
+                        }}
+                        titulo='Postar'>
+                        <IconIonicons icon='arrow-forward-circle' size={30} />
+                    </BtnWithIcon>
 
                     <View style={styles.comentarioContainer}>
                         <Text>Comentários</Text>
@@ -546,10 +538,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputComentario: {
-        flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: '100%'
     },
     box: {
         color: 'black',
