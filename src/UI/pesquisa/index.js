@@ -30,7 +30,8 @@ import {
     ActivityIndicator,
     FlatList,
     TextInput,
-    SafeAreaView
+    SafeAreaView,
+    Alert
 } from 'react-native';
 import { color } from 'react-native-elements/dist/helpers';
 import axios from 'axios';
@@ -84,7 +85,7 @@ const PesquisaInicial = ({ navigation }) => {
                 .then((response) => {
                     setData(response.data.objeto);
                 }).catch((error) => {
-                    alert("Atenção: " + error.response.data)
+                    Alert.alert("Atenção", error.response.data)
                 });
 
             const listaPesquisas = await AsyncStorage.getItem('CursosPesquisados');

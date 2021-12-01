@@ -14,11 +14,11 @@ const BottomTabNavigator = () => {
     const routeName = route.state
       ? route.state.routes[route.state.index].name
       : '';
-  
+
     if (routeName === 'PesquisaInicial') {
       return false;
     }
-  
+
     return true;
   }
 
@@ -37,10 +37,10 @@ const BottomTabNavigator = () => {
 
         else if (route.name === 'Favoritos') {
           if (focused) {
-            return <IconAntDesign icon="star" size={size} style={{}} />;
+            return <IconAntDesign icon="heart" size={size} style={{}} />;
           }
           else {
-            return <IconAntDesign icon="staro" size={size} style={{}} />;
+            return <IconAntDesign icon="hearto" size={size} style={{}} />;
           }
         }
 
@@ -55,10 +55,10 @@ const BottomTabNavigator = () => {
 
         else if (route.name === 'Recomendados') {
           if (focused) {
-            return <IconAntDesign icon="heart" size={size} style={{}} />;
+            return <IconAntDesign icon="star" size={size} style={{}} />;
           }
           else {
-            return <IconAntDesign icon="hearto" size={size} style={{}} />;
+            return <IconAntDesign icon="staro" size={size} style={{}} />;
           }
         }
       },
